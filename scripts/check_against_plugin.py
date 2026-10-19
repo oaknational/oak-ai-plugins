@@ -1,10 +1,13 @@
-"""Check the README, CHANGELOG and marketplace entry against the Claude plugin.
+"""Check the README, CHANGELOG and marketplace entries against the packages.
 
-The README restates facts the plugin holds: the skills that ship, the
-workflows' commands and the MCP config. The CHANGELOG's latest entry must be
-the version the plugin carries. The marketplace entry repeats the plugin's
-display name, description and keywords. Each is recomputed from the plugin,
-so none of them can drift from it. Run by CI and by the pre-commit hook.
+The README restates facts the Claude plugin holds: the skills that ship, the
+workflows' commands and the MCP config. The ChatGPT package ships the same
+skills, with each workflow merged into a skill of the same name. The
+CHANGELOG's latest entry must be the version both packages carry. The Claude
+marketplace entry repeats the plugin's display name, description and
+keywords; the ChatGPT marketplace entry repeats the package's name. Each is
+recomputed from the packages, so none of them can drift from them. Run by CI
+and by the pre-commit hook.
 """
 
 import json
@@ -13,6 +16,7 @@ import re
 import sys
 
 PLUGIN = "claude/plugins/oak-national-academy"
+CHATGPT = "chatgpt/plugins/oak-national-academy"
 
 
 def read(path: str) -> str:
@@ -26,6 +30,7 @@ def check_readme() -> list:
     readme = read("README.md")
     skills = set(os.listdir(f"{PLUGIN}/skills"))
     workflows = set(os.listdir(f"{PLUGIN}/workflows"))
+    chatgpt_skills = set(os.listdir(f"{CHATGPT}/skills"))
     table = readme.split("## The skills", 1)[1].split("###", 1)[0]
     listed = set(re.findall(r"^\|\s*`([^`]+)`\s*\|", table, re.M))
     commands = set(re.findall(r"^\|\s*`/([a-z-]+)", readme, re.M))
@@ -37,6 +42,11 @@ def check_readme() -> list:
         problems.append(
             f"README: skills table lists {sorted(listed)}, plugin ships {sorted(skills | workflows)}"
         )
+    if chatgpt_skills != skills | workflows:
+        problems.append(
+            f"README: the ChatGPT package ships {sorted(chatgpt_skills)}, "
+            f"the skills table lists {sorted(skills | workflows)}"
+        )
     if commands != workflows:
         problems.append(
             f"README: commands table lists {sorted(commands)}, plugin ships {sorted(workflows)}"
@@ -46,13 +56,15 @@ def check_readme() -> list:
     return problems
 
 
-def check_changelog(version: str) -> list:
-    """The CHANGELOG's latest entry must be the plugin's version."""
+def check_changelog(manifests: dict) -> list:
+    """The CHANGELOG's latest entry must be each package's version."""
     latest = re.search(r"^## (\S+)", read("CHANGELOG.md"), re.M)
-    if latest and latest.group(1) == version:
-        return []
     found = latest.group(1) if latest else "none"
-    return [f"CHANGELOG: latest entry is {found}, plugin.json says {version}"]
+    return [
+        f"CHANGELOG: latest entry is {found}, {path} says {manifest['version']}"
+        for path, manifest in manifests.items()
+        if manifest["version"] != found
+    ]
 
 
 def check_marketplace(manifest: dict) -> list:
@@ -68,10 +80,27 @@ def check_marketplace(manifest: dict) -> list:
     ]
 
 
+def check_chatgpt_marketplace(manifest: dict) -> list:
+    """The ChatGPT marketplace must list the package under its manifest's name."""
+    marketplace = json.loads(read(".agents/plugins/marketplace.json"))
+    entries = [e for e in marketplace["plugins"] if e["source"].get("path") == f"./{CHATGPT}"]
+    if len(entries) != 1:
+        return [
+            f"ChatGPT marketplace: expected one entry with path ./{CHATGPT}, found {len(entries)}"
+        ]
+    if entries[0]["name"] != manifest["name"]:
+        return ["ChatGPT marketplace: name differs from the package's plugin.json"]
+    return []
+
+
 def main() -> int:
     manifest = json.loads(read(f"{PLUGIN}/.claude-plugin/plugin.json"))
+    chatgpt = json.loads(read(f"{CHATGPT}/.codex-plugin/plugin.json"))
     problems = (
-        check_readme() + check_changelog(manifest["version"]) + check_marketplace(manifest)
+        check_readme()
+        + check_changelog({PLUGIN: manifest, CHATGPT: chatgpt})
+        + check_marketplace(manifest)
+        + check_chatgpt_marketplace(chatgpt)
     )
     prefix = "::error::" if os.environ.get("GITHUB_ACTIONS") else "error: "
     for problem in problems:

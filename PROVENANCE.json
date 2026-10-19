@@ -1,13 +1,25 @@
 {
-  "$comment": "Machine-readable provenance for every plugin copy this repository publishes. CI (the Sync fidelity check) clones each source at the recorded commit and fails if the copy differs beyond the recorded divergences. Updated by scripts/sync_plugin.py; checked by scripts/check_provenance.py.",
+  "$comment": "Machine-readable provenance for every plugin copy this repository publishes. CI (the Sync fidelity check) clones each source at the recorded commit and fails if the copy differs beyond the recorded divergences. manifest is the package's manifest file, relative to path. Updated by scripts/sync_plugin.py; checked by scripts/check_provenance.py.",
   "publishes": [
     {
       "path": "claude/plugins/oak-national-academy",
+      "manifest": ".claude-plugin/plugin.json",
       "source_repo": "https://github.com/oaknational/oak-open-curriculum-ecosystem",
       "source_path": "claude/plugins/oak-national-academy",
-      "commit": "a7cf0cc19a96adb3f39a4901f28d5996316be8fe",
+      "commit": "fa3bce5b6af42b97c287f6feec6619cc0352b101",
       "release": null,
-      "plugin_version": "0.1.6",
+      "plugin_version": "1.1.0",
+      "excluded": ["evals/"],
+      "known_divergences": []
+    },
+    {
+      "path": "chatgpt/plugins/oak-national-academy",
+      "manifest": ".codex-plugin/plugin.json",
+      "source_repo": "https://github.com/oaknational/oak-open-curriculum-ecosystem",
+      "source_path": "chatgpt/plugins/oak-national-academy",
+      "commit": "fa3bce5b6af42b97c287f6feec6619cc0352b101",
+      "release": null,
+      "plugin_version": "1.1.0",
       "excluded": ["evals/"],
       "known_divergences": []
     }

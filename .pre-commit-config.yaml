@@ -58,8 +58,8 @@ repos:
         pass_filenames: false
         files: ^claude/
       - id: check-against-plugin
-        name: Check the README, CHANGELOG and marketplace entry against the plugin
+        name: Check the README, CHANGELOG and marketplace entries against the packages
         entry: python3 scripts/check_against_plugin.py
         language: system
         pass_filenames: false
-        files: ^(README\.md|CHANGELOG\.md|\.claude-plugin/|claude/|scripts/)
+        files: ^(README\.md|CHANGELOG\.md|\.claude-plugin/|\.agents/|claude/|chatgpt/|scripts/)

@@ -87,11 +87,17 @@ def differing_files(source: Path, copy: Path, excluded: list[str]) -> list[str]:
 
 def published_paths() -> set[str]:
     """The plugin copies this repository actually publishes, from the
-    marketplace file — the set PROVENANCE.json must cover."""
-    marketplace = json.loads(
+    marketplace files — the set PROVENANCE.json must cover. Claude's lists
+    each source as a path; the ChatGPT/Codex one as {"source", "path"}."""
+    claude = json.loads(
         (ROOT / ".claude-plugin" / "marketplace.json").read_text(encoding="utf-8")
     )
-    return {p["source"].removeprefix("./") for p in marketplace["plugins"]}
+    chatgpt = json.loads(
+        (ROOT / ".agents" / "plugins" / "marketplace.json").read_text(encoding="utf-8")
+    )
+    sources = [p["source"] for p in claude["plugins"]]
+    sources += [p["source"]["path"] for p in chatgpt["plugins"]]
+    return {s.removeprefix("./") for s in sources}
 
 
 def check_publish(publish: dict) -> list[str]:
@@ -103,12 +109,10 @@ def check_publish(publish: dict) -> list[str]:
         problems.append(f"{publish['path']}: commit must be a full 40-character SHA")
         return problems
 
-    manifest = json.loads(
-        (copy / ".claude-plugin" / "plugin.json").read_text(encoding="utf-8")
-    )
+    manifest = json.loads((copy / publish["manifest"]).read_text(encoding="utf-8"))
     if manifest["version"] != publish["plugin_version"]:
         problems.append(
-            f"{publish['path']}: plugin.json says {manifest['version']}, "
+            f"{publish['path']}: {publish['manifest']} says {manifest['version']}, "
             f"PROVENANCE.json says {publish['plugin_version']}"
         )
 
@@ -144,7 +148,7 @@ def main() -> int:
     recorded = {p["path"] for p in provenance["publishes"]}
     for path in sorted(published_paths() - recorded):
         problems.append(
-            f"{path}: published by the marketplace but has no PROVENANCE.json entry"
+            f"{path}: published by a marketplace but has no PROVENANCE.json entry"
         )
 
     for publish in provenance["publishes"]:

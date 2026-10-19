@@ -1,7 +1,7 @@
 name: Checks
 
 # Plugin validation, sync fidelity, Markdown lint, formatting and secret
-# scanning. The plugin under claude/ is a copy from
+# scanning. The packages under claude/ and chatgpt/ are copies from
 # oak-open-curriculum-ecosystem, so the lint and format settings match that
 # repository's: a finding in a copied file is fixed there, not here — and the
 # Sync fidelity job proves each copy matches the source PROVENANCE.json
@@ -34,8 +34,10 @@ jobs:
         run: ./node_modules/@anthropic-ai/claude-code-linux-x64/claude plugin validate --strict .
       - name: Validate the Claude plugin
         run: ./node_modules/@anthropic-ai/claude-code-linux-x64/claude plugin validate --strict claude/plugins/oak-national-academy
-      - name: Check the README, CHANGELOG and marketplace entry against the plugin
+      - name: Check the README, CHANGELOG and marketplace entries against the packages
         run: python3 scripts/check_against_plugin.py
+      - name: Build the ChatGPT upload ZIP
+        run: python3 scripts/build_chatgpt_zip.py --out "$RUNNER_TEMP/chatgpt.zip"
 
   fidelity:
     name: Sync fidelity
