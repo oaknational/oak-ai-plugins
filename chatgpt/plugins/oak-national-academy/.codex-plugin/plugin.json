@@ -87,7 +87,7 @@
         }
       },
       "publication": {
-        "release_notes": "Initial OpenAI release"
+        "release_notes": "Updated for OpenAI's new plugin submission process, which needs the Oak MCP server and the listing details in the package itself. No changes to the skills or what the plugin does."
       }
     }
   }

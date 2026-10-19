@@ -4,7 +4,7 @@ Each version is the version of the plugins this repository publishes, the Claude
 
 ## 1.1.0 — 2026-10-19
 
-- Publishes the Claude plugin and the ChatGPT package 1.1.0, copied from oak-open-curriculum-ecosystem at fa3bce5b6, without the `evals/` folders.
+- Publishes the Claude plugin and the ChatGPT package 1.1.0, copied from oak-open-curriculum-ecosystem at 386f3f8bf (release v1.186.0), without the `evals/` folders.
 - First publication of the ChatGPT package, under `chatgpt/plugins/oak-national-academy`, with a ChatGPT and Codex marketplace file at `.agents/plugins/marketplace.json`.
 - The ChatGPT upload ZIP workflow builds the ZIP OpenAI's plugin portal takes, with the manifest's name set to the live app's ID, and attaches it to the release.
 - The sync, the Sync fidelity check, the drift check and the README, CHANGELOG and marketplace checks cover both packages. A sync copies both from one commit, and refuses one whose packages carry different versions.
