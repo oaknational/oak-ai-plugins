@@ -48,6 +48,7 @@ import os
 import re
 import sys
 from pathlib import Path
+from typing import Any
 from urllib.parse import urlparse
 
 import yaml
@@ -242,14 +243,14 @@ def read(path: str) -> str:
     return (ROOT / path).read_text(encoding="utf-8")
 
 
-def read_json(path: str) -> object:
+def read_json(path: str) -> Any:
     try:
         return json.loads(read(path))
     except json.JSONDecodeError as error:
         raise Unreadable(f"{path}: not valid JSON ({error})") from error
 
 
-def read_frontmatter(path: str) -> tuple[object, str]:
+def read_frontmatter(path: str) -> tuple[Any, str]:
     """The parsed frontmatter and the body after it."""
     text = read(path)
     end = text.find("\n---\n", 4)
