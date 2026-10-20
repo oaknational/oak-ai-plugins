@@ -1,0 +1,82 @@
+name: Release
+
+# Cuts a release by hand. Checks the version against both manifests and the
+# CHANGELOG, builds the ChatGPT upload ZIP (scripts/build_chatgpt_zip.py: the
+# published copy, with the manifest's name set to the live app's ID), and
+# creates the release with the ZIP attached and the CHANGELOG entry as its
+# notes. Releases here are immutable, so a file can only be attached as the
+# release is created: gh creates it as a draft, uploads the ZIP, then
+# publishes. A dry run (the default) checks and builds, and creates nothing.
+# It runs only from main, so every release is a reviewed, merged commit, and
+# refuses a version that already has a release: tags here cannot be deleted.
+# Uploading the ZIP to the portal, and submitting it for review, stay manual.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release, without the v (e.g. 1.2.0); must match both manifests and the latest CHANGELOG entry'
+        required: true
+      dry_run:
+        description: 'Check and build only; create no release'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+
+jobs:
+  release:
+    name: Check, build and release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write # create the release and its tag
+    env:
+      VERSION: ${{ inputs.version }}
+    steps:
+      - name: Refuse to release from anything but main
+        if: github.ref != 'refs/heads/main'
+        run: |
+          echo "::error::Releases are cut from main only, so every release is a reviewed, merged commit"
+          exit 1
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Check the version and write the release notes
+        run: python3 scripts/release_notes.py --version "$VERSION" --out "$RUNNER_TEMP/notes.md"
+
+      - name: Refuse a version that is already released
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/v${VERSION}" --silent 2>/dev/null; then
+            echo "::error::v${VERSION} already exists; raise the version first"
+            exit 1
+          fi
+
+      - name: Run the package checks
+        run: |
+          python3 scripts/check_against_plugin.py
+          python3 scripts/check_skill_copies.py
+          python3 scripts/check_packages.py
+
+      - name: Build the ChatGPT upload ZIP
+        run: |
+          ZIP="$RUNNER_TEMP/oak-national-academy-chatgpt-v${VERSION}.zip"
+          python3 scripts/build_chatgpt_zip.py --out "$ZIP"
+          sha256sum "$ZIP"
+          echo "ZIP=$ZIP" >> "$GITHUB_ENV"
+
+      - name: Create the release with the ZIP attached
+        if: ${{ !inputs.dry_run }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "v${VERSION}" "$ZIP" --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" --title "v${VERSION}" --notes-file "$RUNNER_TEMP/notes.md"

@@ -64,6 +64,10 @@ expected to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
    commit on `main`. It needs the required checks and an approving review before
    it can merge. The checks are described in
    [.github/workflows/README.md](.github/workflows/README.md).
-4. To run the same checks locally before each commit, install
+4. To release, run the **Release** workflow with the version, first as a dry
+   run. It checks the version against both manifests and the latest
+   CHANGELOG entry, builds the ChatGPT upload ZIP and creates the release with
+   the ZIP attached. Uploading the ZIP to OpenAI's portal stays manual.
+5. To run the same checks locally before each commit, install
    [pre-commit](https://pre-commit.com) and the hooks once, as the README
    describes.
