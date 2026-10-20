@@ -63,7 +63,7 @@ def is_skill(path: Path) -> bool:
 def list_root(root: Path) -> tuple[list[str], list[str], list[str]]:
     """Skills, directories that are not skills, and symlinked entries directly under a root."""
     skills, invalid, symlinks = [], [], []
-    for entry in sorted(root.iterdir()):
+    for entry in sorted(root.iterdir(), key=lambda e: e.name):
         if entry.is_symlink():
             symlinks.append(entry.name)
         elif entry.is_dir():

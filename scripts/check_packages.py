@@ -273,7 +273,8 @@ def entries(path: str) -> list[tuple[str, str]]:
     """A directory's entries and their kinds."""
     if not (ROOT / path).is_dir():
         raise Unreadable(f"{path}: missing")
-    return [(entry.name, kind(entry)) for entry in sorted((ROOT / path).iterdir())]
+    # Sorted by name explicitly: Path ordering ignores case on Windows.
+    return sorted((entry.name, kind(entry)) for entry in (ROOT / path).iterdir())
 
 
 def directories(path: str) -> list[str]:
