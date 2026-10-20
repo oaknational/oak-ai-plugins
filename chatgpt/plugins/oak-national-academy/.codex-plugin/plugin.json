@@ -1,0 +1,94 @@
+{
+  "name": "oak-national-academy",
+  "version": "1.1.0",
+  "description": "Free, national curriculum-aligned Oak teaching resources.",
+  "author": {
+    "name": "Oak National Academy",
+    "url": "https://www.thenational.academy"
+  },
+  "homepage": "https://www.thenational.academy",
+  "repository": "https://github.com/oaknational/oak-ai-plugins",
+  "license": "MIT (code — see https://github.com/oaknational/oak-open-curriculum-ecosystem/blob/main/LICENCE). Curriculum content from the Oak Open Curriculum API: Open Government Licence v3.0 — see https://github.com/oaknational/oak-open-curriculum-ecosystem/blob/main/LICENCE-DATA.md for upstream terms. Oak branding is not MIT-licensed — see https://github.com/oaknational/oak-open-curriculum-ecosystem/blob/main/BRANDING.md and https://support.thenational.academy/using-the-oak-brand",
+  "keywords": ["education", "curriculum", "national-curriculum", "oak", "teaching"],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Oak National Academy",
+    "shortDescription": "Free UK teaching resources",
+    "longDescription": "Bring Oak National Academy's free, fully sequenced resources for England’s national curriculum into your conversations with ChatGPT. \n\nWhen you connect Oak, ChatGPT can draw on thousands of expertly sequenced curricula and teaching resources across 17 subjects and Key Stages 1 to 4. That includes keywords, common misconceptions, prior knowledge requirements, high-quality explanations, quiz questions, cross-phase topics and more. \n\nOak is a publicly funded, independent body sponsored by the UK Department for Education. Oak’s content is written and quality-assured by subject experts, so ChatGPT can work from a solid curriculum base rather than generating material from scratch.\n\nExpertly sequenced, curriculum-aligned resources\nUse ChatGPT to access Oak's extensive library of national curriculum-aligned lessons and resources, covering every national curriculum subject across Key Stages 1 to 4. It’s all planned for progression across these phases, with cross-curricular links between subjects.\n\nMade by teachers, for teachers\nOak’s resources are all made and quality-assured by subject experts.\n\nOak is completely free to use\nEvery Oak resource is free to use and adapt for your pupils.  \n\nSafe and in your control\nOak does not store your personal data or your pupils' information through this connection. \n\nChatGPT can draw on Oak's content, but will not always do this. Its outputs are AI-generated and not endorsed by Oak. You are the expert and know your pupils best. As with all resources, check carefully that what you create is right for your pupils and context. \n\nOak content is licensed under the Open Government Licence v3.0 and requires attribution to Oak. A small amount of Oak’s content is not available through this ChatGPT plugin due to copyright and licensing restrictions.\n\nExplore the full library at thenational.academy.",
+    "developerName": "Oak National Academy",
+    "category": "Education & Research",
+    "capabilities": [],
+    "websiteURL": "https://www.thenational.academy",
+    "privacyPolicyURL": "https://www.thenational.academy/legal/privacy-policy",
+    "termsOfServiceURL": "https://www.thenational.academy/legal/terms-and-conditions",
+    "supportURL": "https://support.thenational.academy",
+    "defaultPrompt": [
+      "Show me the year-by-year teaching progression for photosynthesis in science.",
+      "What are some common misconceptions when teaching the area of a triangle?",
+      "Which keywords are included in the Year 1 art and design curriculum lesson by lesson in chronological order?"
+    ],
+    "logo": "./assets/icon.png",
+    "composerIcon": "./assets/icon.png"
+  },
+  "extensions": {
+    "com.openai": {
+      "review": {
+        "test_cases": {
+          "positive": [
+            {
+              "description": "Anticipating pupil errors before teaching",
+              "prompt": "I'm teaching Year 6 addition and subtraction of fractions. What errors should I expect and how should I respond?",
+              "tools_triggered": "search, get-misconception-graph",
+              "expected_behavior": "- The unit with its year group and key stage\n- All ten lessons in the unit, in teaching order, each with the misconceptions Oak records for it\n- A specific teacher response paired with every misconception, naming a concrete strategy rather than general advice\n- The unit's stated prior knowledge, returned alongside"
+            },
+            {
+              "description": "Scoping what exists before planning",
+              "prompt": "I've been asked to teach a unit on climate change to Year 6. What has Oak got on this topic?",
+              "tools_triggered": "explore-topic, search",
+              "expected_behavior": "- Units matching the topic across all subjects and key stages, each with title, slug, subject and year\n- Lesson titles within those units"
+            },
+            {
+              "description": "Understanding a progression across year groups",
+              "prompt": "How does drawing develop across primary art, and what should Year 5 already be able to do?",
+              "tools_triggered": "search, get-thread-progressions, get-prior-knowledge-graph",
+              "expected_behavior": "- The drawing thread's units in curriculum order, Year 1 through Year 6, with titles and year groups\n- The stated prior knowledge for the Year 5 drawing units"
+            },
+            {
+              "description": "Finding resources for a lesson",
+              "prompt": "Is there a worksheet and slide deck I can use for teaching the water cycle in Year 4 science?",
+              "tools_triggered": "search, get-lessons-assets, download-asset",
+              "expected_behavior": "The lesson with its slides, worksheet and quizzes"
+            },
+            {
+              "description": "Identifying prior knowledge before teaching a new topic",
+              "prompt": "I am teaching maths to Year 7 and we are starting a new topic on plotting coordinates. What is their likely prior knowledge that they should have on this topic?",
+              "tools_triggered": "search, get-prior-knowledge-graph",
+              "expected_behavior": "- The matching Year 7 unit, with its lessons\n- The unit's three stated prior knowledge statements"
+            }
+          ],
+          "negative": [
+            {
+              "description": "Pastoral request from a teacher. It mentions a year group and pupils, but is about wellbeing and parent communication, which Oak's curriculum data does not cover.",
+              "prompt": "One of my Year 9 pupils has become withdrawn and stopped handing work in. How should I approach a conversation with them and their parents?",
+              "expected_behavior": "A general answer about pastoral support, with no Oak tools called."
+            },
+            {
+              "description": "Trip safety paperwork. It names a river, which is geography Oak teaches, and fieldwork is part of that curriculum, but a risk assessment is a school safety document that Oak's curriculum data does not provide.",
+              "prompt": "Write a risk assessment for our Year 4 geography field trip to a local river.",
+              "expected_behavior": "A general risk assessment for the trip, with no Oak tools called."
+            },
+            {
+              "description": "Pupil assessment analysis. It reads like teaching work and names a year group, but needs pupils' own results, and Oak holds no pupil data.",
+              "prompt": "Analyse my Year 9 mock results and tell me which pupils need intervention.",
+              "expected_behavior": "A request for the results, or general guidance, with no Oak tools called."
+            }
+          ]
+        }
+      },
+      "publication": {
+        "release_notes": "Updated for OpenAI's new plugin submission process, which needs the Oak MCP server and the listing details in the package itself. No changes to the skills or what the plugin does."
+      }
+    }
+  }
+}

@@ -1,7 +1,8 @@
 name: Sync plugin from the ecosystem
 
-# One-click publish: copies claude/plugins/oak-national-academy from
-# oak-open-curriculum-ecosystem at the given ref, strips the excluded paths,
+# One-click publish: copies every package in PROVENANCE.json (the Claude
+# plugin and the ChatGPT package) from oak-open-curriculum-ecosystem at the
+# given ref, strips the excluded paths,
 # rewrites PROVENANCE.json, stubs the root CHANGELOG entry, formats both and
 # opens a pull request — so a publish cannot be done inconsistently by hand. The fidelity
 # check runs here too, and again as a required check on the pull request.
@@ -26,7 +27,7 @@ permissions:
 
 jobs:
   sync:
-    name: Copy the plugin and open a pull request
+    name: Copy the packages and open a pull request
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -43,7 +44,7 @@ jobs:
           path: ecosystem
           persist-credentials: false
 
-      - name: Copy the plugin and update PROVENANCE.json + CHANGELOG.md
+      - name: Copy the packages and update PROVENANCE.json + CHANGELOG.md
         run: |
           COMMIT=$(git -C ecosystem rev-parse HEAD)
           python3 scripts/sync_plugin.py --source ecosystem --commit "$COMMIT" \
@@ -67,7 +68,7 @@ jobs:
       - name: Check the copy against its recorded source
         run: python3 scripts/check_provenance.py
 
-      - name: Check the README, CHANGELOG and marketplace entry against the plugin
+      - name: Check the README, CHANGELOG and marketplace entries against the packages
         # Advisory here: a sync that adds or removes a skill, or changes the
         # manifest, legitimately leaves the repository-owned README and
         # marketplace entry behind. The pull request must still open so they
@@ -77,7 +78,7 @@ jobs:
           if python3 scripts/check_against_plugin.py; then
             echo "DERIVED_STALE=" >> "$GITHUB_ENV"
           else
-            echo "::warning::The README, CHANGELOG or marketplace entry no longer match the plugin — update them on the sync branch before merge."
+            echo "::warning::The README, CHANGELOG or marketplace entries no longer match the packages — update them on the sync branch before merge."
             echo "DERIVED_STALE=1" >> "$GITHUB_ENV"
           fi
 
@@ -93,13 +94,13 @@ jobs:
           git checkout -b "$BRANCH"
           git add -A
           git diff --cached --quiet && { echo "Nothing changed; the copy already matches ${COMMIT:0:9}."; exit 0; }
-          git commit -m "chore: publish the Claude plugin ${VERSION} from the ecosystem at ${COMMIT:0:9}"
+          git commit -m "chore: publish the plugins ${VERSION} from the ecosystem at ${COMMIT:0:9}"
           git push origin "$BRANCH"
-          BODY="Copies \`claude/plugins/oak-national-academy\` from oak-open-curriculum-ecosystem at ${COMMIT}${RELEASE:+ (release $RELEASE)}, without the excluded paths in PROVENANCE.json. Produced by the **Sync plugin from the ecosystem** workflow; the Sync fidelity check proves the copy."
+          BODY="Copies \`claude/plugins/oak-national-academy\` and \`chatgpt/plugins/oak-national-academy\` from oak-open-curriculum-ecosystem at ${COMMIT}${RELEASE:+ (release $RELEASE)}, without the excluded paths in PROVENANCE.json. Produced by the **Sync plugin from the ecosystem** workflow; the Sync fidelity check proves the copy."
           if [ -n "$DERIVED_STALE" ]; then
-            BODY="$BODY$(printf '\n\n> [!WARNING]\n> The README, CHANGELOG or marketplace entry no longer match the plugin — update them on this branch before merge.')"
+            BODY="$BODY$(printf '\n\n> [!WARNING]\n> The README, CHANGELOG or marketplace entries no longer match the packages — update them on this branch before merge.')"
           fi
           BODY="$BODY$(printf '\n\nChecks do not start on workflow-created pull requests: close and reopen this PR to run them.')"
           gh pr create \
-            --title "chore: publish the Claude plugin ${VERSION} from the ecosystem at ${COMMIT:0:9}" \
+            --title "chore: publish the plugins ${VERSION} from the ecosystem at ${COMMIT:0:9}" \
             --body "$BODY"

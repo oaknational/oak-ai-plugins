@@ -1,0 +1,12 @@
+{
+  "name": "oak-ai-plugins",
+  "interface": { "displayName": "Oak National Academy" },
+  "plugins": [
+    {
+      "name": "oak-national-academy",
+      "source": { "source": "local", "path": "./chatgpt/plugins/oak-national-academy" },
+      "policy": { "installation": "AVAILABLE", "authentication": "ON_USE" },
+      "category": "Education"
+    }
+  ]
+}

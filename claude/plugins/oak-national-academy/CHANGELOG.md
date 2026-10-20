@@ -5,6 +5,18 @@ ChatGPT/Codex package are cut from the same source at the same version.
 Each entry is dated when it is written; oaknational/oak-ai-plugins records
 the oak-open-curriculum-ecosystem release that shipped it.
 
+## 1.1.0 — 2026-10-19
+
+- The ChatGPT/Codex package declares the Oak MCP server in `.mcp.json`. OpenAI's
+  plugin portal no longer accepts skills-only packages.
+- The ChatGPT/Codex package carries the fields OpenAI's ZIP upload checks: the
+  subtitle, long description, category, support link and default prompts from
+  the approved ChatGPT listing, the Oak icon, the review test cases and release
+  notes.
+- The ChatGPT/Codex package names oaknational/oak-ai-plugins as its repository.
+- Version 1.1.0 is above the approved ChatGPT listing's 1.0.0, which the portal
+  requires of an update. The Claude plugin changes only its version.
+
 ## 0.1.6 — 2026-10-01
 
 - The Claude plugin README says who the plugin is for and the DfE standards it

@@ -32,7 +32,7 @@ def source_manifest_version(publish: dict) -> str:
     owner_repo = publish["source_repo"].removeprefix("https://github.com/")
     url = (
         f"https://raw.githubusercontent.com/{owner_repo}/{DEFAULT_BRANCH}/"
-        f"{publish['source_path']}/.claude-plugin/plugin.json"
+        f"{publish['source_path']}/{publish['manifest']}"
     )
     with urllib.request.urlopen(url, timeout=30) as response:
         return json.load(response)["version"]

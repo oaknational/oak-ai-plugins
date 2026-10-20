@@ -1,0 +1,55 @@
+name: ChatGPT upload ZIP
+
+# Builds the ZIP that OpenAI's plugin portal takes for the ChatGPT package
+# (scripts/build_chatgpt_zip.py: the published copy, with the manifest's
+# name set to the live app's ID) and attaches it to the release. Run it by
+# hand to attach the ZIP to an existing release, replacing any earlier one.
+# Uploading the ZIP to the portal, and submitting it for review, stay manual.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to build from and attach the ZIP to (e.g. v1.1.0)'
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: chatgpt-zip-${{ inputs.tag || github.event.release.tag_name }}
+
+jobs:
+  zip:
+    name: Build the ZIP and attach it to the release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write # attach the ZIP to the release
+    env:
+      TAG: ${{ inputs.tag || github.event.release.tag_name }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: refs/tags/${{ env.TAG }}
+          persist-credentials: false
+
+      - name: Check the tag is the package's version
+        # The portal refuses a version that is not above the published one,
+        # so a ZIP must never carry a version its release name doesn't say.
+        run: |
+          VERSION=$(python3 -c "import json; print(json.load(open('chatgpt/plugins/oak-national-academy/.codex-plugin/plugin.json'))['version'])")
+          [ "$TAG" = "v$VERSION" ] || { echo "::error::Release $TAG carries ChatGPT package $VERSION"; exit 1; }
+
+      - name: Build the ZIP
+        run: |
+          ZIP="$RUNNER_TEMP/oak-national-academy-chatgpt-${TAG}.zip"
+          python3 scripts/build_chatgpt_zip.py --out "$ZIP"
+          echo "ZIP=$ZIP" >> "$GITHUB_ENV"
+
+      - name: Attach it to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$TAG" "$ZIP" --clobber --repo "$GITHUB_REPOSITORY"

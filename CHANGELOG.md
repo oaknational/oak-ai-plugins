@@ -1,6 +1,14 @@
 # Changelog
 
-Each version is the version of the Claude plugin this repository publishes, copied from [oak-open-curriculum-ecosystem](https://github.com/oaknational/oak-open-curriculum-ecosystem). This file records what was published here and when. What changed in the plugin itself is in [its own changelog](claude/plugins/oak-national-academy/CHANGELOG.md).
+Each version is the version of the plugins this repository publishes, the Claude plugin and the ChatGPT package, both copied from [oak-open-curriculum-ecosystem](https://github.com/oaknational/oak-open-curriculum-ecosystem). This file records what was published here and when. What changed in the plugins themselves is in [the Claude plugin's changelog](claude/plugins/oak-national-academy/CHANGELOG.md).
+
+## 1.1.0 — 2026-10-19
+
+- Publishes the Claude plugin and the ChatGPT package 1.1.0, copied from oak-open-curriculum-ecosystem at 386f3f8bf (release v1.186.0), without the `evals/` folders.
+- First publication of the ChatGPT package, under `chatgpt/plugins/oak-national-academy`, with a ChatGPT and Codex marketplace file at `.agents/plugins/marketplace.json`.
+- The ChatGPT upload ZIP workflow builds the ZIP OpenAI's plugin portal takes, with the manifest's name set to the live app's ID, and attaches it to the release.
+- The sync, the Sync fidelity check, the drift check and the README, CHANGELOG and marketplace checks cover both packages. A sync copies both from one commit, and refuses one whose packages carry different versions.
+- The Claude plugin changes only its version.
 
 ## 0.1.6 — 2026-10-01
 

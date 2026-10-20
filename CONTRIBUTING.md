@@ -52,9 +52,9 @@ expected to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 1. Change a plugin in oak-open-curriculum-ecosystem, raise its version and add a
    changelog entry there.
-2. Once that is released, copy the plugin here with the **Sync plugin from the
-   ecosystem** workflow, giving it the release's ref. It copies the plugin
-   without the `evals/` folders, records the source in
+2. Once that is released, copy the plugins here with the **Sync plugin from the
+   ecosystem** workflow, giving it the release's ref. It copies the Claude plugin
+   and the ChatGPT package without the `evals/` folders, records the source in
    [PROVENANCE.json](PROVENANCE.json) and adds an entry to
    [CHANGELOG.md](CHANGELOG.md). Until the workflow can open pull requests
    itself, open one from the branch it pushes.
