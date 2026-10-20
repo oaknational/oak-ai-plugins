@@ -10,14 +10,14 @@ run and names each file that differs:
 - a skill only the ChatGPT package has must derive from a Claude workflow of
   the same name (the merged skills; scripts/check_packages.py checks the
   derivation itself), otherwise it is a stale copy of a deleted skill;
-- nothing that must not ship reaches a copy: no `evals/` folder, and no
-  symlink anywhere. Symlinks are reported, never followed.
+- nothing that must not ship reaches a copy: no `evals/` folder at any depth,
+  and no symlink anywhere. Symlinks are reported, never followed.
 
 A skill is a directory holding a regular `SKILL.md`. Which skills are shared
 is discovered from the two trees each run, never listed, so a new skill is
-covered the moment it exists. A top-level `evals/` folder is authoring
-tooling: it is skipped in the Claude plugin's skills and is a finding in a
-copy.
+covered the moment it exists. An `evals/` folder is authoring tooling: it
+is skipped in the Claude plugin's skills and is a finding in a copy. A
+folder that cannot be read stops the check, so a partial scan never passes.
 
 Ported from the oak-open-curriculum-ecosystem validator
 validate-plugin-skill-copies. Exit 0 when the copies match; 1 when there are
@@ -71,10 +71,14 @@ def list_root(root: Path) -> tuple[list[str], list[str], list[str]]:
     return skills, invalid, symlinks
 
 
-def read_tree(skill_dir: Path, skip_top: set[str]) -> dict[str, bytes | None]:
+def raise_error(error: OSError) -> None:
+    raise error
+
+
+def read_tree(skill_dir: Path, skip: set[str]) -> dict[str, bytes | None]:
     """Every entry under a skill, keyed by relative path: file bytes, or None for a symlink."""
     tree: dict[str, bytes | None] = {}
-    for dirpath, dirnames, filenames in os.walk(skill_dir):
+    for dirpath, dirnames, filenames in os.walk(skill_dir, onerror=raise_error):
         base = Path(dirpath)
         relative_dir = base.relative_to(skill_dir)
         kept = []
@@ -82,7 +86,7 @@ def read_tree(skill_dir: Path, skip_top: set[str]) -> dict[str, bytes | None]:
             path = base / name
             if path.is_symlink():
                 tree[(relative_dir / name).as_posix()] = None
-            elif not (relative_dir == Path(".") and name in skip_top):
+            elif name not in skip:
                 kept.append(name)
         dirnames[:] = kept
         for name in sorted(filenames):
@@ -92,7 +96,8 @@ def read_tree(skill_dir: Path, skip_top: set[str]) -> dict[str, bytes | None]:
 
 
 def not_shipped(relative: str) -> bool:
-    return "/" in relative and relative.split("/", 1)[0] in NOT_SHIPPED
+    """Whether any folder on the path is one that must not ship."""
+    return any(part in NOT_SHIPPED for part in relative.split("/")[:-1])
 
 
 def compare_skill(skill: str, source: Path, copy: Path) -> tuple[list[str], int]:

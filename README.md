@@ -79,6 +79,7 @@ scripts/
   check_drift.py                    # the weekly version comparison for drift.yml
   build_chatgpt_zip.py              # builds the ChatGPT upload ZIP for release.yml
   release_notes.py                  # checks a release's version and writes its notes from the CHANGELOG
+  requirements.txt                  # the pinned packages check_packages.py needs (PyYAML, jsonschema)
 PROVENANCE.json                     # where each published copy came from
 .pre-commit-config.yaml             # the same checks, run locally before each commit
 docs/

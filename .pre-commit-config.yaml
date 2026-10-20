@@ -71,7 +71,8 @@ repos:
         files: ^(claude/|chatgpt/|scripts/)
       - id: check-packages
         name: Check the rules both packages follow
-        entry: python3 scripts/check_packages.py
-        language: system
+        entry: python scripts/check_packages.py
+        language: python
+        additional_dependencies: [pyyaml==6.0.3, jsonschema==4.26.0]
         pass_filenames: false
         files: ^(assets/|\.agents/|claude/|chatgpt/|scripts/)
