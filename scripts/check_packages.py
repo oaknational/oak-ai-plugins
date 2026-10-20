@@ -318,9 +318,13 @@ def check_mcp_binding() -> list[str]:
     skill = f"{CLAUDE}/skills/oak-curriculum-principles-mcp-enabled/SKILL.md"
     frontmatter, _ = read_frontmatter(skill)
     note = str(frontmatter.get("compatibility", "")) if isinstance(frontmatter, dict) else ""
-    production = urlparse(MCP_ENDPOINT).netloc
-    if production not in note or "oaknational.dev" in note:
-        problems.append(f"{skill}: compatibility note must name {production} and no other host")
+    # The note is prose, so it names the address without https://. Every address
+    # ending /mcp in it must be the production one, whole: a longer host that
+    # merely contains it, such as wrong-mcp.thenational.academy, does not count.
+    production = MCP_ENDPOINT.removeprefix("https://")
+    named = re.findall(r"[\w.-]+/mcp(?![\w/.-])", note)
+    if not named or any(address != production for address in named):
+        problems.append(f"{skill}: compatibility note must name {production} and no other MCP address")
     return problems
 
 
