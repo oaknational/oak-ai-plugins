@@ -322,7 +322,7 @@ def check_mcp_binding() -> list[str]:
     # ending /mcp in it must be the production one, whole: a longer host that
     # merely contains it, such as wrong-mcp.thenational.academy, does not count.
     production = MCP_ENDPOINT.removeprefix("https://")
-    named = re.findall(r"[\w.-]+/mcp(?![\w/.-])", note)
+    named = [word for word in re.split(r"[\s()]+", note) if "/mcp" in word]
     if not named or any(address != production for address in named):
         problems.append(f"{skill}: compatibility note must name {production} and no other MCP address")
     return problems
