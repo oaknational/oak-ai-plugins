@@ -1,6 +1,6 @@
 {
-  // The rules match oak-open-curriculum-ecosystem's .markdownlint.json, because
-  // the plugin under claude/ is copied from there and fixed there.
+  // The rules started as oak-open-curriculum-ecosystem's .markdownlint.json,
+  // where the plugins were built until 1.1.0.
   "config": {
     "MD004": { "style": "dash" },
     "no-inline-html": false,
@@ -17,7 +17,5 @@
     "ol-prefix": false
   },
   "globs": ["**/*.md"],
-  // The plugin's own changelog is copied as-is, and the ecosystem doesn't lint
-  // changelogs. This repository's CHANGELOG.md is written here, so it is linted.
-  "ignores": ["node_modules/**", "claude/**/CHANGELOG.md"]
+  "ignores": ["node_modules/**"]
 }

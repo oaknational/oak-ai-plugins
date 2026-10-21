@@ -1,9 +1,7 @@
 name: Link check
 
 # Checks every Markdown link that points inside the repository, anchors
-# included. Offline, so the result is deterministic and can be required. The
-# plugin's own changelog is skipped: it is copied as-is from
-# oak-open-curriculum-ecosystem.
+# included. Offline, so the result is deterministic and can be required.
 
 on:
   pull_request:
@@ -31,6 +29,5 @@ jobs:
             --offline
             --no-progress
             --include-fragments
-            --exclude-path 'claude/.*/CHANGELOG\.md'
             './**/*.md'
           fail: true
