@@ -1,19 +1,15 @@
-name: Publish drift
+name: Spec drift
 
-# Weekly alarms for the two ways this repository can silently fall behind
-# the world. Issues are off here by design, so a red run of this workflow is
+# A weekly alarm for the plugin no longer validating against the LATEST
+# Claude Code. Issues are off here by design, so a red run of this workflow is
 # the signal. GitHub emails scheduled-run failures ONLY to whoever last
 # edited the workflow file — keep that a maintainer, and re-save the file if
 # that person leaves. A team channel notification can hang off the Oak
 # Semantic Release Bot's token once that is set up (see the workflows
 # README); until then the Actions tab badge is the shared view.
 #
-#   drift: the ecosystem's plugin version is ahead of the one published
-#   here. Catch up by running the "Sync plugin from the ecosystem" workflow.
-#
-#   spec: the plugin no longer validates against the LATEST Claude Code.
-#   Pull requests validate with a pinned binary so they stay deterministic;
-#   this job is the early warning that Anthropic's spec moved under us.
+# Pull requests validate with a pinned binary so they stay deterministic;
+# this job is the early warning that Anthropic's spec moved under us.
 
 on:
   schedule:
@@ -24,17 +20,6 @@ permissions:
   contents: read
 
 jobs:
-  drift:
-    name: Published plugin version vs the ecosystem
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - name: Compare each published version with its source's default branch
-        run: python3 scripts/check_drift.py
-
   spec:
     name: Validate with the latest Claude Code
     runs-on: ubuntu-latest

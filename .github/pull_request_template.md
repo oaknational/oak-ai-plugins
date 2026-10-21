@@ -1,11 +1,10 @@
 <!-- Title: a Conventional Commit with the ticket at the end when there is one, for example
-"chore: publish plugin 0.1.4 from oak-open-curriculum-ecosystem (MCP-123)".
+"fix: correct the tool names in audit-sequence (MCP-123)".
 Pull requests are squash-merged, so the title becomes the commit on main. -->
 
 ## Description
 
-<!-- What this changes, and why. For a plugin update, name the plugin version and the
-oak-open-curriculum-ecosystem commit and release it was copied from. -->
+<!-- What this changes, and why. For a plugin change, name the new plugin version. -->
 
 -
 
@@ -19,7 +18,7 @@ Fixes MCP-
 
 ## Checklist
 
-- [ ] Plugin changes were made in oak-open-curriculum-ecosystem first; each package under `<host>/<kind>/<package>/` is an unedited copy of a named commit, without the `evals/` folders, apart from any difference named in this pull request and in `CHANGELOG.md`
+- [ ] A change to a skill both packages ship is made in both, and the package checks pass
 - [ ] The plugin version in `plugin.json` has a matching entry at the top of `CHANGELOG.md`, dated the day this merges
 - [ ] `claude plugin validate --strict` passes for the plugin and the marketplace
 - [ ] The README's skills and commands tables still match what ships
