@@ -63,3 +63,16 @@ repos:
         language: system
         pass_filenames: false
         files: ^(README\.md|CHANGELOG\.md|\.claude-plugin/|\.agents/|claude/|chatgpt/|scripts/)
+      - id: check-skill-copies
+        name: Check the ChatGPT package's skills are exact copies of the Claude plugin's
+        entry: python3 scripts/check_skill_copies.py
+        language: system
+        pass_filenames: false
+        files: ^(claude/|chatgpt/|scripts/)
+      - id: check-packages
+        name: Check the rules both packages follow
+        entry: python scripts/check_packages.py
+        language: python
+        additional_dependencies: [pyyaml==6.0.3, jsonschema==4.26.0]
+        pass_filenames: false
+        files: ^(assets/|\.agents/|claude/|chatgpt/|scripts/)

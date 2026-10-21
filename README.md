@@ -41,6 +41,8 @@ Each package lives at `<host>/<kind>/<package>/`, so another host, or another ki
   marketplace.json                  # Claude Code marketplace; points at claude/plugins/oak-national-academy
 .agents/plugins/
   marketplace.json                  # ChatGPT and Codex marketplace; points at chatgpt/plugins/oak-national-academy
+assets/
+  oak-national-academy-logo-512.png # the Oak logo both packages' icons must match
 claude/
   plugins/
     oak-national-academy/           # the Claude plugin, copied from the ecosystem repository
@@ -62,18 +64,22 @@ chatgpt/
 .github/
   pull_request_template.md
   workflows/
-    checks.yml                      # plugin validation, sync fidelity, Markdown lint, Prettier, gitleaks
+    checks.yml                      # plugin validation and package checks, sync fidelity, Markdown lint, Prettier, gitleaks
     link-check.yml                  # internal links and anchors
     pr-title.yml                    # the pull request title, which becomes the commit on main
     sync-plugin.yml                 # copies a version of both packages from the ecosystem and opens the publish PR
-    chatgpt-zip.yml                 # builds the ChatGPT upload ZIP and attaches it to the release
+    release.yml                     # run by hand: checks the version, builds the ChatGPT upload ZIP and creates the release with it
     drift.yml                       # weekly: fails when the ecosystem is ahead of what's published, or the plugin no longer validates with the latest Claude Code
 scripts/
   check_against_plugin.py           # checks this README, the CHANGELOG and the marketplace entries against the packages
+  check_skill_copies.py             # checks the ChatGPT package's skills are exact copies of the Claude plugin's
+  check_packages.py                 # checks the manifests, the merged skills, the listing links, the icons and the MCP binding
   check_provenance.py               # checks each copy against the source commit in PROVENANCE.json
   sync_plugin.py                    # does the copy for sync-plugin.yml
   check_drift.py                    # the weekly version comparison for drift.yml
-  build_chatgpt_zip.py              # builds the ChatGPT upload ZIP for chatgpt-zip.yml
+  build_chatgpt_zip.py              # builds the ChatGPT upload ZIP for release.yml
+  release_notes.py                  # checks a release's version and writes its notes from the CHANGELOG
+  requirements.txt                  # the pinned packages check_packages.py needs (PyYAML, jsonschema)
 PROVENANCE.json                     # where each published copy came from
 .pre-commit-config.yaml             # the same checks, run locally before each commit
 docs/
@@ -116,7 +122,7 @@ Commands are namespaced when ambiguous, for example `/oak-national-academy:find-
 
 The ChatGPT package carries the same five skills. ChatGPT has no workflows or subagents, so each of the two workflows and its subagent are merged into one skill of the same name. The package declares the Oak Curriculum MCP in its `.mcp.json`.
 
-It is published to ChatGPT's plugin directory through OpenAI's plugin portal, which takes the package as a ZIP. The [ChatGPT upload ZIP workflow](.github/workflows/chatgpt-zip.yml) builds it for each release and attaches it to the release. The portal only accepts the live app's ID as the package name, so the ZIP's manifest carries the ID in place of `oak-national-academy`; every other file is the published copy unchanged. The demo video and the reviewer account are entered in the portal, not held here.
+It is published to ChatGPT's plugin directory through OpenAI's plugin portal, which takes the package as a ZIP. The [Release workflow](.github/workflows/release.yml) builds it and attaches it to each release as the release is created; releases here are immutable, so nothing can be attached afterwards. The portal only accepts the live app's ID as the package name, so the ZIP's manifest carries the ID in place of `oak-national-academy`; every other file is the published copy unchanged. The demo video and the reviewer account are entered in the portal, not held here.
 
 ## The Oak Curriculum MCP
 

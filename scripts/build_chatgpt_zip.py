@@ -8,8 +8,8 @@ except the manifest, whose `name` it sets to the app ID. Entries are
 sorted and carry fixed timestamps, so the same copy always builds the
 same ZIP.
 
-Run by the "ChatGPT upload ZIP" workflow, which attaches the ZIP to a
-release, and by the Plugin validation job; runs locally too:
+Run by the "Release" workflow, which attaches the ZIP to the release it
+creates, and by the Plugin validation job; runs locally too:
 
   python3 scripts/build_chatgpt_zip.py --out oak-national-academy-chatgpt.zip
 """
