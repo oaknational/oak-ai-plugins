@@ -6,13 +6,9 @@ contribute differ depending on whether you work at Oak National Academy.
 
 ## Are pull requests accepted?
 
-**Not from outside Oak National Academy.** This repository only holds published
-copies. The plugins are written and tested in
-[oak-open-curriculum-ecosystem](https://github.com/oaknational/oak-open-curriculum-ecosystem),
-next to the Oak Curriculum MCP server they connect to, and each release is
-copied here. A change made here would be overwritten by the next copy, so we are
-not able to review or merge external pull requests, and we would rather say so
-plainly than leave one sitting unanswered.
+**Not from outside Oak National Academy.** We are not able to review or merge
+external pull requests, and we would rather say so plainly than leave one
+sitting unanswered.
 
 ## What feedback is most useful
 
@@ -50,24 +46,21 @@ expected to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## For Oak engineers
 
-1. Change a plugin in oak-open-curriculum-ecosystem, raise its version and add a
-   changelog entry there.
-2. Once that is released, copy the plugins here with the **Sync plugin from the
-   ecosystem** workflow, giving it the release's ref. It copies the Claude plugin
-   and the ChatGPT package without the `evals/` folders, records the source in
-   [PROVENANCE.json](PROVENANCE.json) and adds an entry to
-   [CHANGELOG.md](CHANGELOG.md). Until the workflow can open pull requests
-   itself, open one from the branch it pushes.
-3. Open a pull request against `main`. Its title is a
+1. Change the plugins here, on a branch. A change to a skill both packages
+   ship is made in both: the ChatGPT package's copy must match the Claude
+   plugin's byte for byte, and `scripts/check_skill_copies.py` fails until it
+   does. Raise the version in both manifests and add an entry to
+   [CHANGELOG.md](CHANGELOG.md).
+2. Open a pull request against `main`. Its title is a
    [Conventional Commit](https://www.conventionalcommits.org/) with the ticket at
    the end when there is one, because pull requests are squash-merged and the title becomes the
    commit on `main`. It needs the required checks and an approving review before
    it can merge. The checks are described in
    [.github/workflows/README.md](.github/workflows/README.md).
-4. To release, run the **Release** workflow with the version, first as a dry
+3. To release, run the **Release** workflow with the version, first as a dry
    run. It checks the version against both manifests and the latest
    CHANGELOG entry, builds the ChatGPT upload ZIP and creates the release with
    the ZIP attached. Uploading the ZIP to OpenAI's portal stays manual.
-5. To run the same checks locally before each commit, install
+4. To run the same checks locally before each commit, install
    [pre-commit](https://pre-commit.com) and the hooks once, as the README
    describes.

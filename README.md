@@ -45,7 +45,7 @@ assets/
   oak-national-academy-logo-512.png # the Oak logo both packages' icons must match
 claude/
   plugins/
-    oak-national-academy/           # the Claude plugin, copied from the ecosystem repository
+    oak-national-academy/           # the Claude plugin
       .claude-plugin/plugin.json    #   plugin manifest
       .mcp.json                     #   the Oak Curriculum MCP, installed with the plugin
       agents/                       #   the subagents the workflows hand work to
@@ -55,7 +55,7 @@ claude/
       README.md                     #   the directory listing text
 chatgpt/
   plugins/
-    oak-national-academy/           # the ChatGPT package, copied from the ecosystem repository
+    oak-national-academy/           # the ChatGPT package
       .codex-plugin/plugin.json     #   manifest, with the listing fields and review test cases
       .mcp.json                     #   the Oak Curriculum MCP
       skills/                       #   the five skills; each workflow merged into a skill
@@ -64,23 +64,18 @@ chatgpt/
 .github/
   pull_request_template.md
   workflows/
-    checks.yml                      # plugin validation and package checks, sync fidelity, Markdown lint, Prettier, gitleaks
+    checks.yml                      # plugin validation and package checks, Markdown lint, Prettier, gitleaks
     link-check.yml                  # internal links and anchors
     pr-title.yml                    # the pull request title, which becomes the commit on main
-    sync-plugin.yml                 # copies a version of both packages from the ecosystem and opens the publish PR
     release.yml                     # run by hand: checks the version, builds the ChatGPT upload ZIP and creates the release with it
-    drift.yml                       # weekly: fails when the ecosystem is ahead of what's published, or the plugin no longer validates with the latest Claude Code
+    drift.yml                       # weekly: fails when the plugin no longer validates with the latest Claude Code
 scripts/
   check_against_plugin.py           # checks this README, the CHANGELOG and the marketplace entries against the packages
   check_skill_copies.py             # checks the ChatGPT package's skills are exact copies of the Claude plugin's
   check_packages.py                 # checks the manifests, the merged skills, the listing links, the icons and the MCP binding
-  check_provenance.py               # checks each copy against the source commit in PROVENANCE.json
-  sync_plugin.py                    # does the copy for sync-plugin.yml
-  check_drift.py                    # the weekly version comparison for drift.yml
   build_chatgpt_zip.py              # builds the ChatGPT upload ZIP for release.yml
   release_notes.py                  # checks a release's version and writes its notes from the CHANGELOG
   requirements.txt                  # the pinned packages check_packages.py needs (PyYAML, jsonschema)
-PROVENANCE.json                     # where each published copy came from
 .pre-commit-config.yaml             # the same checks, run locally before each commit
 docs/
   public-release.md                 # how this repository was prepared for public release
@@ -89,7 +84,7 @@ CONTRIBUTING.md, SUPPORT.md, SECURITY.md, CODE_OF_CONDUCT.md
 LICENSE, LICENCE-DATA.md, BRANDING.md, ATTRIBUTION.md
 ```
 
-The `evals/` folders are left out of the copy. They are Oak's authoring tests and stay in the ecosystem repository.
+The skill evals are not in this repository. They are in the history of [oak-open-curriculum-ecosystem](https://github.com/oaknational/oak-open-curriculum-ecosystem), at release v1.186.0, in each skill's `evals/` folder.
 
 ## Using a skill
 
@@ -149,10 +144,10 @@ The MCP sits on top of the [Oak Curriculum API](https://open-api.thenational.aca
 
 ## Contributing
 
-This repository publishes the plugins; it isn't where they are built. They are built in [oak-open-curriculum-ecosystem](https://github.com/oaknational/oak-open-curriculum-ecosystem), under `claude/plugins/oak-national-academy` and `chatgpt/plugins/oak-national-academy`, next to the Oak Curriculum MCP server they connect to. That repository is too large for Claude's plugin directory to read, so each release of the plugins is copied here. Each copy is made by the [sync workflow](.github/workflows/sync-plugin.yml), recorded in [PROVENANCE.json](PROVENANCE.json), and proven against its source by the Sync fidelity check on every pull request.
+The plugins are built and released here. Up to 1.1.0 they were built in [oak-open-curriculum-ecosystem](https://github.com/oaknational/oak-open-curriculum-ecosystem) and copied here; its history, at release v1.186.0, holds the earlier versions, the skill evals and the checks this repository's were ported from.
 
 - **Feedback, bugs and curriculum corrections:** use the [AI plugin feedback form](https://survey.hsforms.com/2vy6BnIvzTASqx1DbH8CaJAbvumd). GitHub issues are turned off. See [SUPPORT.md](SUPPORT.md) for scope and response times.
-- **Pull requests** are only accepted from Oak engineers. See [CONTRIBUTING.md](CONTRIBUTING.md). Pull requests here only carry copies from the ecosystem repository and changes to this repository's own files. They are squash-merged, so each title is written as a Conventional Commit with the ticket at the end when there is one, and becomes the commit on `main`.
+- **Pull requests** are only accepted from Oak engineers. See [CONTRIBUTING.md](CONTRIBUTING.md). They are squash-merged, so each title is written as a Conventional Commit with the ticket at the end when there is one, and becomes the commit on `main`.
 - **Security vulnerabilities:** see [SECURITY.md](SECURITY.md), never the feedback form.
 - Everyone is expected to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
 
