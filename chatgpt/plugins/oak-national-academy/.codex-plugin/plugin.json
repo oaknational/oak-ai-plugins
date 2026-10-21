@@ -1,6 +1,6 @@
 {
   "name": "oak-national-academy",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Free, national curriculum-aligned Oak teaching resources.",
   "author": {
     "name": "Oak National Academy",
@@ -8,7 +8,7 @@
   },
   "homepage": "https://www.thenational.academy",
   "repository": "https://github.com/oaknational/oak-ai-plugins",
-  "license": "MIT (code — see https://github.com/oaknational/oak-open-curriculum-ecosystem/blob/main/LICENCE). Curriculum content from the Oak Open Curriculum API: Open Government Licence v3.0 — see https://github.com/oaknational/oak-open-curriculum-ecosystem/blob/main/LICENCE-DATA.md for upstream terms. Oak branding is not MIT-licensed — see https://github.com/oaknational/oak-open-curriculum-ecosystem/blob/main/BRANDING.md and https://support.thenational.academy/using-the-oak-brand",
+  "license": "MIT (code — see https://github.com/oaknational/oak-ai-plugins/blob/main/LICENSE). Curriculum content from the Oak Open Curriculum API: Open Government Licence v3.0 — see https://github.com/oaknational/oak-ai-plugins/blob/main/LICENCE-DATA.md for upstream terms. Oak branding is not MIT-licensed — see https://github.com/oaknational/oak-ai-plugins/blob/main/BRANDING.md and https://support.thenational.academy/using-the-oak-brand",
   "keywords": ["education", "curriculum", "national-curriculum", "oak", "teaching"],
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
@@ -87,7 +87,7 @@
         }
       },
       "publication": {
-        "release_notes": "Updated for OpenAI's new plugin submission process, which needs the Oak MCP server and the listing details in the package itself. No changes to the skills or what the plugin does."
+        "release_notes": "Maintenance update. No changes to the skills or what the plugin does."
       }
     }
   }

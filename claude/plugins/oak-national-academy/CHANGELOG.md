@@ -1,9 +1,20 @@
 # Changelog
 
 Versions are the plugin manifest version. The Claude Code plugin and the
-ChatGPT/Codex package are cut from the same source at the same version.
-Each entry is dated when it is written; oaknational/oak-ai-plugins records
-the oak-open-curriculum-ecosystem release that shipped it.
+ChatGPT/Codex package share one version. Each entry is dated when it is
+written. Up to 1.1.0 the plugins were built in oak-open-curriculum-ecosystem;
+from 1.1.1 they are built in oaknational/oak-ai-plugins.
+
+## 1.1.1 — 2026-10-21
+
+- Both manifests' `license` field links to this repository's LICENSE,
+  LICENCE-DATA.md and BRANDING.md, in place of oak-open-curriculum-ecosystem's.
+- The ChatGPT/Codex package README names the checks that hold it here,
+  `scripts/check_skill_copies.py` and `scripts/check_packages.py`, in place of
+  the ecosystem's.
+- The ChatGPT/Codex package's release notes: "Maintenance update. No changes to
+  the skills or what the plugin does."
+- No changes to the skills.
 
 ## 1.1.0 — 2026-10-19
 

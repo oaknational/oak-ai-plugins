@@ -2,6 +2,13 @@
 
 Each version is the version of the plugins this repository publishes, the Claude plugin and the ChatGPT package. Up to 1.1.0 they were copied from [oak-open-curriculum-ecosystem](https://github.com/oaknational/oak-open-curriculum-ecosystem); from then on they are built here. This file records what was published here and when. What changed in the plugins themselves is in [the Claude plugin's changelog](claude/plugins/oak-national-academy/CHANGELOG.md).
 
+## 1.1.1 — 2026-10-21
+
+- The first version built here, not copied from oak-open-curriculum-ecosystem. What changed in the plugins is in [the Claude plugin's changelog](https://github.com/oaknational/oak-ai-plugins/blob/main/claude/plugins/oak-national-academy/CHANGELOG.md): the licence links and the ChatGPT package README.
+- The package checks moved here from the ecosystem, and the Release workflow builds the ChatGPT upload ZIP and attaches it as each release is created (MCP-773).
+- The sync from the ecosystem is retired, with the Sync fidelity check, the ecosystem version check and PROVENANCE.json (MCP-774).
+- The Claude plugin's changelog is linted and link-checked like the rest of the repository.
+
 ## 1.1.0 — 2026-10-19
 
 - Publishes the Claude plugin and the ChatGPT package 1.1.0, copied from oak-open-curriculum-ecosystem at 386f3f8bf (release v1.186.0), without the `evals/` folders.

@@ -13,9 +13,8 @@ workflow that passes the user's input as `$ARGUMENTS`; ChatGPT has neither agent
 workflows. So here:
 
 - every skill present in both plugins is a byte-identical copy of the Claude one (`evals/`
-  left out of the copy, and refused if it appears here); `validate-plugin-skill-copies` (in
-  `pnpm repo-validators:check`) discovers that
-  set from the two trees rather than keeping a list, fails when a Claude skill has no copy
+  left out of the copy, and refused if it appears here); `scripts/check_skill_copies.py` (run in
+  CI and pre-commit) discovers that set from the two trees rather than keeping a list, fails when a Claude skill has no copy
   here, and fails when a skill here has no Claude source unless it derives from a Claude
   workflow of the same name;
 - `audit-sequence` and `find-misconceptions` each merge a Claude workflow and its agent into
@@ -35,16 +34,16 @@ workflows. So here:
 - `interface.capabilities` is `[]`, the value the OpenAI sideload accepted on 2026-09-07.
 
 The last two, the declared server and `capabilities: []`, and the agreement of the two
-manifests are recomputed by `agent-tools/tests/skills/chatgpt-plugin-package-invariants.integration.test.ts`:
-the manifest is parsed through a strict schema at every level, the package root is held to
+manifests are recomputed by `scripts/check_packages.py`: the manifest is checked against a
+strict schema at every level, the package root is held to
 exactly `.codex-plugin`, `.mcp.json`, `README.md`, `assets` and `skills`, so a companion file
 cannot appear unnoticed, the review block holds exactly five positive and three negative test
 cases and nothing else, and the root marketplace file must list exactly this package under the
 manifest's name.
 
-That validator fails the build when a shared copy drifts from its Claude source. An
-integration test, `agent-tools/tests/skills/chatgpt-merged-skill-derivation.integration.test.ts`,
-fails it when a merged skill and its Claude agent stop matching from the first heading onward.
+`check_skill_copies.py` fails the build when a shared copy drifts from its Claude source, and
+`check_packages.py` fails it when a merged skill and its Claude agent stop matching from the
+first heading onward.
 The durable fix is a generator (MCP-342); until then the copies are honest because they are
 checked.
 
@@ -93,10 +92,10 @@ account.
 The portal also requires the package `name` to be the live app's ID,
 `app-6aa0141317a08191a8e8f74fbabeeff1`, and rejects any other name; an update's version must
 be above the published one (observed 2026-10-19). The name here stays `oak-national-academy`,
-the name Codex and workspace installs show; oaknational/oak-ai-plugins sets the ID when it
-builds the upload ZIP (MCP-767).
+the name Codex and workspace installs show; the Release workflow sets the ID when it builds
+the upload ZIP (MCP-767, MCP-773).
 
 ## Publishing
 
 The package is submitted to OpenAI's Plugin Directory through the portal (MCP-107), from the
-ZIP oaknational/oak-ai-plugins builds of its published copy.
+ZIP the Release workflow attaches to each release of oaknational/oak-ai-plugins.
