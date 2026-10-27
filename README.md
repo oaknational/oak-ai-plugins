@@ -119,6 +119,8 @@ The ChatGPT package carries the same five skills. ChatGPT has no workflows or su
 
 It is published to ChatGPT's plugin directory through OpenAI's plugin portal, which takes the package as a ZIP. The [Release workflow](.github/workflows/release.yml) builds it and attaches it to each release as the release is created; releases here are immutable, so nothing can be attached afterwards. The portal only accepts the live app's ID as the package name, so the ZIP's manifest carries the ID in place of `oak-national-academy`; every other file is the published copy unchanged. The demo video and the reviewer account are entered in the portal, not held here.
 
+**Uploading to the OpenAI portal.** Each release carries the upload ZIP. Open the [latest release](https://github.com/oaknational/oak-ai-plugins/releases/latest), and under **Assets** download `oak-national-academy-chatgpt-v<version>.zip`. Upload it to the existing Oak app in the OpenAI plugin portal as a new draft version; don't create a new app. The demo video and reviewer test account are entered in the portal's review form, not taken from the ZIP.
+
 ## The Oak Curriculum MCP
 
 `find-misconceptions`, `audit-sequence` and `oak-curriculum-principles-mcp-enabled` use Oak's live curriculum data through the **Oak Curriculum MCP**, a [Model Context Protocol](https://modelcontextprotocol.io) server. The plugin connects it for you. To connect it without the plugin, add the server to your MCP client config:
