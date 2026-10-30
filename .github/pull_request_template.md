@@ -18,8 +18,8 @@ Fixes MCP-
 
 ## Checklist
 
-- [ ] A change to a skill both packages ship is made in both, and the package checks pass
-- [ ] The plugin version in `plugin.json` has a matching entry at the top of `CHANGELOG.md`, dated the day this merges
+- [ ] A change to a skill the packages share is made in each package, and the package checks pass
+- [ ] The version in every package's manifest has a matching entry at the top of `CHANGELOG.md`, dated the day this merges
 - [ ] `claude plugin validate --strict` passes for the plugin and the marketplace
 - [ ] The README's skills and commands tables still match what ships
 - [ ] The title is a [Conventional Commit](https://www.conventionalcommits.org/) with the ticket at the end, when there is one

@@ -5,7 +5,7 @@
 [![Agent Skills](https://img.shields.io/badge/format-Agent%20Skills-blue)](https://agentskills.io/specification)
 [![Licence](https://img.shields.io/badge/licence-MIT%20%2B%20Oak%20brand-informational)](LICENSE)
 
-Oak National Academy's plugin for AI assistants: skills and workflows that ground an assistant in Oak's live curriculum data, Oak's curriculum principles and its accessibility guidance. Each host's package is published here in its own folder: the Claude plugin, and the ChatGPT package.
+Oak National Academy's plugin for AI assistants: skills and workflows that ground an assistant in Oak's live curriculum data, Oak's curriculum principles and its accessibility guidance. Each host's package is published here in its own folder: the Claude plugin, and the ChatGPT package. A Microsoft 365 Copilot package is being prepared alongside them.
 
 Each skill follows the [Agent Skills specification](https://agentskills.io/specification): a `SKILL.md` with YAML frontmatter, plus any supporting `references/` and `assets/`. The Claude plugin packages the skills with two slash-command workflows, the subagents behind them, and a connection to the Oak Curriculum MCP.
 
@@ -42,7 +42,7 @@ Each package lives at `<host>/<kind>/<package>/`, so another host, or another ki
 .agents/plugins/
   marketplace.json                  # ChatGPT and Codex marketplace; points at chatgpt/plugins/oak-national-academy
 assets/
-  oak-national-academy-logo-512.png # the Oak logo both packages' icons must match
+  oak-national-academy-logo-512.png # the Oak logo the Claude and ChatGPT icons must match
 claude/
   plugins/
     oak-national-academy/           # the Claude plugin
@@ -61,6 +61,13 @@ chatgpt/
       skills/                       #   the five skills; each workflow merged into a skill
       assets/icon.png               #   the listing icon
       README.md                     #   how the package is derived from the Claude plugin
+microsoft/
+  plugins/
+    oak-national-academy/           # the Microsoft 365 Copilot package (not yet uploadable)
+      manifest.json                 #   Microsoft 365 app manifest: the skills and the Oak Curriculum MCP
+      skills/                       #   the ChatGPT package's five skills, copied byte for byte
+      color.png                     #   the colour icon, the Oak logo at 192x192
+      README.md                     #   what is here and what is not finished
 .github/
   pull_request_template.md
   workflows/
@@ -71,8 +78,8 @@ chatgpt/
     drift.yml                       # weekly: fails when the plugin no longer validates with the latest Claude Code
 scripts/
   check_against_plugin.py           # checks this README, the CHANGELOG and the marketplace entries against the packages
-  check_skill_copies.py             # checks the ChatGPT package's skills are exact copies of the Claude plugin's
-  check_packages.py                 # checks the manifests, the merged skills, the listing links, the icons and the MCP binding
+  check_skill_copies.py             # checks the ChatGPT and Microsoft packages' skills are exact copies
+  check_packages.py                 # checks the manifests, the merged skills, the listing links, the icons, the MCP binding and the Microsoft package
   build_chatgpt_zip.py              # builds the ChatGPT upload ZIP for release.yml
   release_notes.py                  # checks a release's version and writes its notes from the CHANGELOG
   requirements.txt                  # the pinned packages check_packages.py needs (PyYAML, jsonschema)
@@ -120,6 +127,12 @@ The ChatGPT package carries the same five skills. ChatGPT has no workflows or su
 It is published to ChatGPT's plugin directory through OpenAI's plugin portal, which takes the package as a ZIP. The [Release workflow](.github/workflows/release.yml) builds it and attaches it to each release as the release is created; releases here are immutable, so nothing can be attached afterwards. The portal only accepts the live app's ID as the package name, so the ZIP's manifest carries the ID in place of `oak-national-academy`; every other file is the published copy unchanged. The demo video and the reviewer account are entered in the portal, not held here.
 
 **Uploading to the OpenAI portal.** Each release carries the upload ZIP. Open the [latest release](https://github.com/oaknational/oak-ai-plugins/releases/latest), and under **Assets** download `oak-national-academy-chatgpt-v<version>.zip`. Upload it to the existing Oak app in the OpenAI plugin portal as a new draft version; don't create a new app. The demo video and reviewer test account are entered in the portal's review form, not taken from the ZIP.
+
+## Microsoft 365 Copilot package
+
+The Microsoft package carries the ChatGPT package's five skills, copied byte for byte, and connects the Oak Curriculum MCP as a connector. It is for Microsoft's plugin store, Copilot Chat and Copilot Cowork.
+
+It is not finished. It cannot be uploaded until its 32×32 outline icon is added, and until a sign-in client is set up for Copilot Chat, sign-in works only in Copilot Cowork. Its [README](microsoft/plugins/oak-national-academy/README.md) says what is there and what is still to do.
 
 ## The Oak Curriculum MCP
 

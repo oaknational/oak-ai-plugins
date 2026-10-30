@@ -1,6 +1,6 @@
 name: Release
 
-# Cuts a release by hand. Checks the version against both manifests and the
+# Cuts a release by hand. Checks the version against every package's manifest and the
 # CHANGELOG, builds the ChatGPT upload ZIP (scripts/build_chatgpt_zip.py: the
 # published copy, with the manifest's name set to the live app's ID), and
 # creates the release with the ZIP attached and the CHANGELOG entry as its
@@ -15,7 +15,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to release, without the v (e.g. 1.2.0); must match both manifests and the latest CHANGELOG entry'
+        description: 'Version to release, without the v (e.g. 1.2.0); must match every manifest and the latest CHANGELOG entry'
         required: true
       dry_run:
         description: 'Check and build only; create no release'

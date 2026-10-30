@@ -1,9 +1,9 @@
 """Check the README, CHANGELOG and marketplace entries against the packages.
 
 The README restates facts the Claude plugin holds: the skills that ship, the
-workflows' commands and the MCP config. The ChatGPT package ships the same
-skills, with each workflow merged into a skill of the same name. The
-CHANGELOG's latest entry must be the version both packages carry. The Claude
+workflows' commands and the MCP config. The ChatGPT and Microsoft packages
+ship the same skills, with each workflow merged into a skill of the same name.
+The CHANGELOG's latest entry must be the version every package carries. The Claude
 marketplace entry repeats the plugin's display name, description and
 keywords; the ChatGPT marketplace entry repeats the package's name. Each is
 recomputed from the packages, so none of them can drift from them. Run by CI
@@ -17,6 +17,7 @@ import sys
 
 PLUGIN = "claude/plugins/oak-national-academy"
 CHATGPT = "chatgpt/plugins/oak-national-academy"
+MICROSOFT = "microsoft/plugins/oak-national-academy"
 
 
 def read(path: str) -> str:
@@ -31,6 +32,7 @@ def check_readme() -> list:
     skills = set(os.listdir(f"{PLUGIN}/skills"))
     workflows = set(os.listdir(f"{PLUGIN}/workflows"))
     chatgpt_skills = set(os.listdir(f"{CHATGPT}/skills"))
+    microsoft_skills = set(os.listdir(f"{MICROSOFT}/skills"))
     table = readme.split("## The skills", 1)[1].split("###", 1)[0]
     listed = set(re.findall(r"^\|\s*`([^`]+)`\s*\|", table, re.M))
     commands = set(re.findall(r"^\|\s*`/([a-z-]+)", readme, re.M))
@@ -45,6 +47,11 @@ def check_readme() -> list:
     if chatgpt_skills != skills | workflows:
         problems.append(
             f"README: the ChatGPT package ships {sorted(chatgpt_skills)}, "
+            f"the skills table lists {sorted(skills | workflows)}"
+        )
+    if microsoft_skills != skills | workflows:
+        problems.append(
+            f"README: the Microsoft package ships {sorted(microsoft_skills)}, "
             f"the skills table lists {sorted(skills | workflows)}"
         )
     if commands != workflows:
@@ -96,9 +103,10 @@ def check_chatgpt_marketplace(manifest: dict) -> list:
 def main() -> int:
     manifest = json.loads(read(f"{PLUGIN}/.claude-plugin/plugin.json"))
     chatgpt = json.loads(read(f"{CHATGPT}/.codex-plugin/plugin.json"))
+    microsoft = json.loads(read(f"{MICROSOFT}/manifest.json"))
     problems = (
         check_readme()
-        + check_changelog({PLUGIN: manifest, CHATGPT: chatgpt})
+        + check_changelog({PLUGIN: manifest, CHATGPT: chatgpt, MICROSOFT: microsoft})
         + check_marketplace(manifest)
         + check_chatgpt_marketplace(chatgpt)
     )
