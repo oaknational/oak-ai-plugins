@@ -1,6 +1,7 @@
-"""Check the rules the two plugin packages must follow, recomputed from the files.
+"""Check the rules the plugin packages must follow, recomputed from the files.
 
-The Claude plugin and the ChatGPT package describe one product, so facts that
+The Claude plugin, the ChatGPT package and the Microsoft package describe one
+product, so facts that
 appear in more than one place are copies, and each copy is checked against
 its source here. Shapes are held by JSON Schemas that are strict at every
 level (no key outside the schema passes), and everything a schema cannot
@@ -31,6 +32,16 @@ be non-empty, so no check passes by reading nothing.
 - MCP binding: both packages bind only the production server,
   https://mcp.thenational.academy/mcp, under the key `oak-national-academy`,
   and the MCP-enabled skill's compatibility note names the same host.
+- Microsoft package: the manifest has exactly the shape this package uses of
+  Microsoft 365 app manifest 1.29 (agentSkills and one agentConnector, the
+  production MCP under the same key), its version, description, name and
+  links agree with the Claude plugin's, agentSkills lists exactly the skill
+  folders it ships, each skill keeps within Microsoft's skill rules (name
+  matches its folder; at most 20 companion files, 5 MB each, 10 MB in all;
+  no hidden files, unsafe characters or Windows reserved names), the colour
+  icon is a 192x192 PNG, and the package root holds exactly the expected
+  entries. The 32x32 outline icon the manifest names is not here yet, so the
+  package cannot be uploaded until it is added.
 
 Ported from the oak-open-curriculum-ecosystem tests
 chatgpt-plugin-package-invariants, chatgpt-merged-skill-derivation,
@@ -59,6 +70,8 @@ CLAUDE = "claude/plugins/oak-national-academy"
 CHATGPT = "chatgpt/plugins/oak-national-academy"
 CLAUDE_MANIFEST = f"{CLAUDE}/.claude-plugin/plugin.json"
 CODEX_MANIFEST = f"{CHATGPT}/.codex-plugin/plugin.json"
+MICROSOFT = "microsoft/plugins/oak-national-academy"
+MICROSOFT_MANIFEST = f"{MICROSOFT}/manifest.json"
 MARKETPLACE = ".agents/plugins/marketplace.json"
 LOGO = "assets/oak-national-academy-logo-512.png"
 ICON = "./assets/icon.png"
@@ -189,6 +202,38 @@ CLAUDE_MANIFEST_SCHEMA = {
                  "termsOfServiceUrl", "supportUrl", "documentationUrl"],
 }
 
+# The part of Microsoft 365 app manifest 1.29 this package uses, strict at every
+# level as Microsoft's own schema is. A field Microsoft accepts but this package
+# does not use (sign-in settings, a tool description file, localisation) fails
+# here until it is added on purpose. The colour icon is the logo resized to
+# 192x192; the 32x32 outline icon is named but not yet in the package.
+MICROSOFT_MANIFEST_SCHEMA = strict({
+    "$schema": {"const": "https://developer.microsoft.com/json-schemas/teams/v1.29/MicrosoftTeams.schema.json"},
+    "manifestVersion": {"const": "1.29"},
+    "version": SHARED_FIELDS["version"],
+    # A GUID, kept the same across versions so an update replaces the app.
+    "id": {"const": "cbe2cc59-e213-4397-be52-5d73547f3aa8"},
+    "developer": strict({
+        "name": {**TEXT, "maxLength": 32},
+        "websiteUrl": HTTPS,
+        "privacyUrl": HTTPS,
+        "termsOfUseUrl": HTTPS,
+    }),
+    "name": strict({"short": {**TEXT, "maxLength": 30}, "full": {**TEXT, "maxLength": 100}}),
+    "description": strict({"short": {**TEXT, "maxLength": 80}, "full": {**TEXT, "maxLength": 4000}}),
+    "icons": strict({"color": {"const": "color.png"}, "outline": {"const": "outline.png"}}),
+    "accentColor": {"type": "string", "pattern": r"^#[0-9A-Fa-f]{6}$"},
+    "agentSkills": {
+        "type": "array", "minItems": 1, "maxItems": 20,
+        "items": strict({"folder": {"type": "string", "pattern": r"^\./skills/[a-z0-9]+(-[a-z0-9]+)*$", "maxLength": 256}}),
+    },
+    "agentConnectors": exactly(1, strict({
+        "id": {"const": MCP_KEY},
+        "displayName": {**TEXT, "maxLength": 128},
+        "toolSource": strict({"remoteMcpServer": strict({"mcpServerUrl": {"const": MCP_ENDPOINT}})}),
+    })),
+})
+
 MCP_CONFIG_SCHEMA = strict({
     "mcpServers": {
         "type": "object",
@@ -290,6 +335,7 @@ def check_schemas() -> list[str]:
         *schema_problems(MCP_CONFIG_SCHEMA, read_json(f"{CLAUDE}/.mcp.json"), f"{CLAUDE}/.mcp.json"),
         *schema_problems(MCP_CONFIG_SCHEMA, read_json(f"{CHATGPT}/.mcp.json"), f"{CHATGPT}/.mcp.json"),
         *schema_problems(MARKETPLACE_SCHEMA, read_json(MARKETPLACE), MARKETPLACE),
+        *schema_problems(MICROSOFT_MANIFEST_SCHEMA, read_json(MICROSOFT_MANIFEST), MICROSOFT_MANIFEST),
     ]
 
 
@@ -299,6 +345,10 @@ def check_package_layout() -> list[str]:
                   ("assets", "directory"), ("skills", "directory")],
         f"{CHATGPT}/.codex-plugin": [("plugin.json", "file")],
         f"{CHATGPT}/assets": [("icon.png", "file")],
+        # Microsoft reads the manifest and icons at the package root. outline.png
+        # joins this list when the outline icon is added.
+        MICROSOFT: [("README.md", "file"), ("color.png", "file"), ("manifest.json", "file"),
+                    ("skills", "directory")],
     }
     return [
         f"{path}: holds {entries(path)}, expected exactly {wanted}"
@@ -470,10 +520,109 @@ def check_claude_readme() -> list[str]:
     return problems
 
 
+PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
+MICROSOFT_COLOR_ICON = (192, 192)
+# Microsoft's per-skill limits on companion files (every file but SKILL.md).
+MAX_COMPANION_FILES = 20
+MAX_COMPANION_BYTES = 5 * 1024 * 1024
+MAX_COMPANION_TOTAL = 10 * 1024 * 1024
+SAFE_NAME = re.compile(r"^[A-Za-z0-9._ !-]+$")
+RESERVED_NAMES = {"CON", "PRN", "AUX", "NUL", *(f"COM{n}" for n in range(1, 10)), *(f"LPT{n}" for n in range(1, 10))}
+
+
+def png_size(path: Path) -> tuple[int, int] | None:
+    """A PNG's width and height from its header, or None if it is not a PNG."""
+    header = path.read_bytes()[:24] if path.is_file() else b""
+    if len(header) < 24 or not header.startswith(PNG_SIGNATURE) or header[12:16] != b"IHDR":
+        return None
+    return int.from_bytes(header[16:20], "big"), int.from_bytes(header[20:24], "big")
+
+
+def check_microsoft_manifest_agrees() -> list[str]:
+    """The Microsoft manifest repeats the Claude plugin's version, description, name and links."""
+    microsoft, claude = read_json(MICROSOFT_MANIFEST), read_json(CLAUDE_MANIFEST)
+    pairs = (
+        ("version", microsoft["version"], claude["version"]),
+        ("description.short", microsoft["description"]["short"], claude["description"]),
+        ("name.short", microsoft["name"]["short"], claude["displayName"]),
+        ("developer.name", microsoft["developer"]["name"], claude["author"]["name"]),
+        ("developer.websiteUrl", microsoft["developer"]["websiteUrl"], claude["homepage"]),
+        ("developer.privacyUrl", microsoft["developer"]["privacyUrl"], claude["privacyPolicyUrl"]),
+        ("developer.termsOfUseUrl", microsoft["developer"]["termsOfUseUrl"], claude["termsOfServiceUrl"]),
+    )
+    return [
+        f"{MICROSOFT_MANIFEST}: {field} differs from the Claude plugin's"
+        for field, here, there in pairs
+        if here != there
+    ]
+
+
+def refused_name(part: str) -> bool:
+    """A file or folder name Microsoft refuses: hidden, unsafe characters, a trailing dot or space, or reserved."""
+    return (
+        part.startswith(".") or not SAFE_NAME.fullmatch(part) or part.endswith((".", " "))
+        or part.split(".")[0].upper() in RESERVED_NAMES
+    )
+
+
+def companion_problems(skill_dir: Path, where: str) -> list[str]:
+    """Microsoft's rules for the files that ship alongside a skill's SKILL.md."""
+    problems, total, count = [], 0, 0
+    refused: list[Path] = []
+    for path in sorted(skill_dir.rglob("*")):
+        relative = path.relative_to(skill_dir)
+        # Name each refused folder once, not again for everything inside it.
+        if not any(parent in relative.parents for parent in refused) and refused_name(relative.name):
+            refused.append(relative)
+            problems.append(f"{where}/{relative.as_posix()}: name Microsoft refuses (hidden, unsafe or reserved)")
+        if path.is_symlink() or not path.is_file() or relative.as_posix() == "SKILL.md":
+            continue
+        count += 1
+        size = path.stat().st_size
+        total += size
+        if size > MAX_COMPANION_BYTES:
+            problems.append(f"{where}/{relative.as_posix()}: over Microsoft's 5 MB limit for one file")
+    if count > MAX_COMPANION_FILES:
+        problems.append(f"{where}: {count} companion files, Microsoft allows {MAX_COMPANION_FILES}")
+    if total > MAX_COMPANION_TOTAL:
+        problems.append(f"{where}: companion files total {total} bytes, Microsoft allows 10 MB")
+    return problems
+
+
+def check_microsoft_skills() -> list[str]:
+    """agentSkills lists exactly the skills shipped, and each keeps within Microsoft's rules."""
+    root = f"{MICROSOFT}/skills"
+    strays = [name for name, kind in entries(root) if kind != "directory"]
+    problems = [f"{root}: entries that are not skill directories would ship: {strays}"] if strays else []
+    shipped = directories(root)
+    if not shipped:
+        return [*problems, f"{root}: holds no skills"]
+    listed = [entry["folder"].removeprefix("./skills/") for entry in read_json(MICROSOFT_MANIFEST)["agentSkills"]]
+    if sorted(listed) != shipped or len(set(listed)) != len(listed):
+        problems.append(f"{MICROSOFT_MANIFEST}: agentSkills lists {listed}, the package ships {shipped}")
+    for skill in shipped:
+        path = f"{root}/{skill}/SKILL.md"
+        frontmatter, _ = read_frontmatter(path)
+        found = schema_problems(SKILL_FRONTMATTER_SCHEMA, frontmatter, path)
+        problems += found
+        if not found and frontmatter["name"] != skill:
+            problems.append(f"{path}: name {frontmatter['name']} does not match its folder")
+        problems += companion_problems(ROOT / root / skill, f"{root}/{skill}")
+    return problems
+
+
+def check_microsoft_icon() -> list[str]:
+    icon = f"{MICROSOFT}/{read_json(MICROSOFT_MANIFEST)['icons']['color']}"
+    if png_size(ROOT / icon) != MICROSOFT_COLOR_ICON:
+        return [f"{icon}: must be a {MICROSOFT_COLOR_ICON[0]}x{MICROSOFT_COLOR_ICON[1]} PNG"]
+    return []
+
+
 # These run only once the schemas pass, so each can rely on the shapes they hold.
 CHECKS_AFTER_SCHEMAS = (
     check_package_layout, check_mcp_binding, check_icons, check_marketplace_entry,
     check_manifests_agree, check_skill_frontmatter, check_merged_skills, check_claude_readme,
+    check_microsoft_manifest_agrees, check_microsoft_skills, check_microsoft_icon,
 )
 
 
@@ -495,7 +644,10 @@ def main() -> int:
     for problem in problems:
         print(f"{prefix}{problem}")
     if not problems:
-        print("Packages: both manifests, the ChatGPT package, the merged skills, the listing and the MCP binding check out.")
+        print(
+            "Packages: the manifests, the ChatGPT package, the merged skills, the listing, the MCP binding "
+            "and the Microsoft package check out."
+        )
     return 1 if problems else 0
 
 
