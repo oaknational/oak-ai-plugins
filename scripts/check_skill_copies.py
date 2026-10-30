@@ -112,25 +112,36 @@ def compare_skill(
     copy_tree = read_tree(copy / skill, set())
     findings, compared = [], 0
     for relative in sorted(set(source_tree) | set(copy_tree)):
-        here, there = source_tree.get(relative, b""), copy_tree.get(relative, b"")
-        if relative in copy_tree and not_shipped(relative):
-            findings.append(f"not shipped: {copy_label}/{skill}/{relative}")
-        elif not_shipped(relative):
-            # Must not ship, so its absence from the copy is right; the source's
-            # own check reports it if the source is itself a copy.
-            continue
-        elif here is None or there is None:
-            side = copy_label if there is None else source_label
-            findings.append(f"symlink: {side}/{skill}/{relative}")
-        elif relative not in copy_tree:
-            findings.append(f"missing in copy: {copy_label}/{skill}/{relative}")
-        elif relative not in source_tree:
-            findings.append(f"not in source: {copy_label}/{skill}/{relative}")
-        else:
-            compared += 1
-            if here != there:
-                findings.append(f"differs: {copy_label}/{skill}/{relative} from {source_label}/{skill}/{relative}")
+        finding, count = compare_file(
+            relative, source_tree, copy_tree, f"{source_label}/{skill}", f"{copy_label}/{skill}"
+        )
+        compared += count
+        if finding:
+            findings.append(finding)
     return findings, compared
+
+
+def compare_file(
+    relative: str, source_tree: dict[str, bytes | None], copy_tree: dict[str, bytes | None],
+    source_where: str, copy_where: str,
+) -> tuple[str | None, int]:
+    """The finding for one path in a skill, if any, and 1 when its two copies were compared."""
+    here, there = source_tree.get(relative, b""), copy_tree.get(relative, b"")
+    if relative in copy_tree and not_shipped(relative):
+        return f"not shipped: {copy_where}/{relative}", 0
+    if not_shipped(relative):
+        # Must not ship, so its absence from the copy is right; the source's
+        # own check reports it if the source is itself a copy.
+        return None, 0
+    if here is None or there is None:
+        return f"symlink: {copy_where if there is None else source_where}/{relative}", 0
+    if relative not in copy_tree:
+        return f"missing in copy: {copy_where}/{relative}", 0
+    if relative not in source_tree:
+        return f"not in source: {copy_where}/{relative}", 0
+    if here != there:
+        return f"differs: {copy_where}/{relative} from {source_where}/{relative}", 1
+    return None, 1
 
 
 def microsoft_findings(copy: Path, copy_skills: list[str]) -> tuple[list[str], int]:

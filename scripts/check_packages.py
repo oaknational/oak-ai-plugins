@@ -560,7 +560,7 @@ def check_microsoft_manifest_agrees() -> list[str]:
 def refused_name(part: str) -> bool:
     """A file or folder name Microsoft refuses: hidden, unsafe characters, a trailing dot or space, or reserved."""
     return (
-        part.startswith(".") or not SAFE_NAME.match(part) or part.endswith((".", " "))
+        part.startswith(".") or not SAFE_NAME.fullmatch(part) or part.endswith((".", " "))
         or part.split(".")[0].upper() in RESERVED_NAMES
     )
 
