@@ -19,7 +19,8 @@ copied on from there, never the other way round. All three packages carry the sa
   two Claude workflows arrive merged into skills of the same name.
   `scripts/check_skill_copies.py` fails when a copy differs from the ChatGPT one, or when a skill
   is missing or extra.
-- `color.png` is the Oak logo at 192×192.
+- `color.png` is the Oak logo at 192×192, the copy kept at
+  `../../../assets/oak-national-academy-logo-192.png`.
 
 `scripts/check_packages.py` checks the manifest against a strict schema, that its version,
 description, name and links agree with the Claude plugin's, that `agentSkills` lists exactly the

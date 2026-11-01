@@ -39,8 +39,8 @@ be non-empty, so no check passes by reading nothing.
   folders it ships, each skill keeps within Microsoft's skill rules (name
   matches its folder; at most 20 companion files, 5 MB each, 10 MB in all;
   no hidden files, unsafe characters or Windows reserved names), the colour
-  icon is a 192x192 PNG, and the package root holds exactly the expected
-  entries. The 32x32 outline icon the manifest names is not here yet, so the
+  icon is the Oak logo kept at assets/oak-national-academy-logo-192.png, and
+  the package root holds exactly the expected entries. The 32x32 outline icon the manifest names is not here yet, so the
   package cannot be uploaded until it is added.
 
 Ported from the oak-open-curriculum-ecosystem tests
@@ -74,6 +74,7 @@ MICROSOFT = "microsoft/plugins/oak-national-academy"
 MICROSOFT_MANIFEST = f"{MICROSOFT}/manifest.json"
 MARKETPLACE = ".agents/plugins/marketplace.json"
 LOGO = "assets/oak-national-academy-logo-512.png"
+LOGO_192 = "assets/oak-national-academy-logo-192.png"
 ICON = "./assets/icon.png"
 REPOSITORY = "https://github.com/oaknational/oak-ai-plugins"
 
@@ -205,8 +206,9 @@ CLAUDE_MANIFEST_SCHEMA = {
 # The part of Microsoft 365 app manifest 1.29 this package uses, strict at every
 # level as Microsoft's own schema is. A field Microsoft accepts but this package
 # does not use (sign-in settings, a tool description file, localisation) fails
-# here until it is added on purpose. The colour icon is the logo resized to
-# 192x192; the 32x32 outline icon is named but not yet in the package.
+# here until it is added on purpose. The colour icon is the logo kept at
+# assets/oak-national-academy-logo-192.png; the 32x32 outline icon is named but
+# not yet in the package.
 MICROSOFT_MANIFEST_SCHEMA = strict({
     "$schema": {"const": "https://developer.microsoft.com/json-schemas/teams/v1.29/MicrosoftTeams.schema.json"},
     "manifestVersion": {"const": "1.29"},
@@ -612,9 +614,13 @@ def check_microsoft_skills() -> list[str]:
 
 
 def check_microsoft_icon() -> list[str]:
+    """The colour icon is the Oak logo kept at assets/ in Microsoft's 192x192 size, byte for byte."""
+    logo = ROOT / LOGO_192
+    if png_size(logo) != MICROSOFT_COLOR_ICON:
+        return [f"{LOGO_192}: must be the Oak logo as a {MICROSOFT_COLOR_ICON[0]}x{MICROSOFT_COLOR_ICON[1]} PNG"]
     icon = f"{MICROSOFT}/{read_json(MICROSOFT_MANIFEST)['icons']['color']}"
-    if png_size(ROOT / icon) != MICROSOFT_COLOR_ICON:
-        return [f"{icon}: must be a {MICROSOFT_COLOR_ICON[0]}x{MICROSOFT_COLOR_ICON[1]} PNG"]
+    if not (ROOT / icon).is_file() or (ROOT / icon).read_bytes() != logo.read_bytes():
+        return [f"{icon}: differs from {LOGO_192}; copy the logo over it"]
     return []
 
 

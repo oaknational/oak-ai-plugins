@@ -43,6 +43,7 @@ Each package lives at `<host>/<kind>/<package>/`, so another host, or another ki
   marketplace.json                  # ChatGPT and Codex marketplace; points at chatgpt/plugins/oak-national-academy
 assets/
   oak-national-academy-logo-512.png # the Oak logo the Claude and ChatGPT icons must match
+  oak-national-academy-logo-192.png # the same logo at 192x192, which the Microsoft colour icon must match
 claude/
   plugins/
     oak-national-academy/           # the Claude plugin
