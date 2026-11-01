@@ -603,6 +603,9 @@ def check_microsoft_skills() -> list[str]:
     if sorted(listed) != shipped or len(set(listed)) != len(listed):
         problems.append(f"{MICROSOFT_MANIFEST}: agentSkills lists {listed}, the package ships {shipped}")
     for skill in shipped:
+        # The folder's own name, which companion_problems does not see: it checks names inside it.
+        if refused_name(skill):
+            problems.append(f"{root}/{skill}: name Microsoft refuses (hidden, unsafe or reserved)")
         path = f"{root}/{skill}/SKILL.md"
         frontmatter, _ = read_frontmatter(path)
         found = schema_problems(SKILL_FRONTMATTER_SCHEMA, frontmatter, path)
