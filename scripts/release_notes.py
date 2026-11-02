@@ -1,6 +1,6 @@
 """Check a release version and write its notes from the CHANGELOG.
 
-A release must carry the version both manifests hold and the CHANGELOG's
+A release must carry the version every package's manifest holds and the CHANGELOG's
 latest entry names, so this script refuses any other version. The notes are
 that CHANGELOG entry, followed by the install commands.
 
@@ -22,6 +22,7 @@ ROOT = Path(__file__).resolve().parent.parent
 MANIFESTS = (
     "claude/plugins/oak-national-academy/.claude-plugin/plugin.json",
     "chatgpt/plugins/oak-national-academy/.codex-plugin/plugin.json",
+    "microsoft/plugins/oak-national-academy/manifest.json",
 )
 INSTALL = """
 ## Install in Claude Code

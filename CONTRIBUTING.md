@@ -46,10 +46,11 @@ expected to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## For Oak engineers
 
-1. Change the plugins here, on a branch. A change to a skill both packages
-   ship is made in both: the ChatGPT package's copy must match the Claude
-   plugin's byte for byte, and `scripts/check_skill_copies.py` fails until it
-   does. Raise the version in both manifests and add an entry to
+1. Change the plugins here, on a branch. A change to a skill the packages
+   share is made in each: the ChatGPT package's copy must match the Claude
+   plugin's byte for byte, the Microsoft package's copy must match the ChatGPT
+   package's, and `scripts/check_skill_copies.py` fails until they do. Raise
+   the version in all three manifests and add an entry to
    [CHANGELOG.md](CHANGELOG.md).
 2. Open a pull request against `main`. Its title is a
    [Conventional Commit](https://www.conventionalcommits.org/) with the ticket at
@@ -58,7 +59,7 @@ expected to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
    it can merge. The checks are described in
    [.github/workflows/README.md](.github/workflows/README.md).
 3. To release, run the **Release** workflow with the version, first as a dry
-   run. It checks the version against both manifests and the latest
+   run. It checks the version against all three manifests and the latest
    CHANGELOG entry, builds the ChatGPT upload ZIP and creates the release with
    the ZIP attached. Uploading the ZIP to OpenAI's portal stays manual.
 4. To run the same checks locally before each commit, install

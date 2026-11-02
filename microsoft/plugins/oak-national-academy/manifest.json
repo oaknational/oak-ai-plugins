@@ -1,0 +1,43 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.29/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.29",
+  "version": "1.1.1",
+  "id": "cbe2cc59-e213-4397-be52-5d73547f3aa8",
+  "developer": {
+    "name": "Oak National Academy",
+    "websiteUrl": "https://www.thenational.academy",
+    "privacyUrl": "https://www.thenational.academy/legal/privacy-policy",
+    "termsOfUseUrl": "https://www.thenational.academy/legal/terms-and-conditions"
+  },
+  "name": {
+    "short": "Oak National Academy",
+    "full": "Oak National Academy"
+  },
+  "description": {
+    "short": "Free, national curriculum-aligned Oak teaching resources.",
+    "full": "Free, national curriculum-aligned Oak teaching resources."
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "accentColor": "#BEF2BD",
+  "agentSkills": [
+    { "folder": "./skills/audit-sequence" },
+    { "folder": "./skills/find-misconceptions" },
+    { "folder": "./skills/oak-accessibility" },
+    { "folder": "./skills/oak-curriculum-principles" },
+    { "folder": "./skills/oak-curriculum-principles-mcp-enabled" }
+  ],
+  "agentConnectors": [
+    {
+      "id": "oak-national-academy",
+      "displayName": "Oak National Academy",
+      "toolSource": {
+        "remoteMcpServer": {
+          "mcpServerUrl": "https://mcp.thenational.academy/mcp"
+        }
+      }
+    }
+  ]
+}
