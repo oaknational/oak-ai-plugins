@@ -23,9 +23,9 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: '22'
+          node-version: '26'
       - name: Install the pinned Claude Code binary (lifecycle scripts disabled)
-        run: npm install --no-save --ignore-scripts --no-audit --no-fund @anthropic-ai/claude-code-linux-x64@2.1.283
+        run: npm install --no-save --ignore-scripts --no-audit --no-fund @anthropic-ai/claude-code-linux-x64@2.1.316
       - name: Validate the marketplace
         run: ./node_modules/@anthropic-ai/claude-code-linux-x64/claude plugin validate --strict .
       - name: Validate the Claude plugin
@@ -36,7 +36,7 @@ jobs:
         run: python3 scripts/check_skill_copies.py
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
-          python-version: '3.12'
+          python-version: '3.14'
       - name: Install the pinned packages the package checks need
         run: |
           python -m pip install --require-hashes --no-deps --only-binary :all: -r scripts/requirements.txt
@@ -55,9 +55,9 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: '22'
+          node-version: '26'
       - name: Install pinned lint tools (lifecycle scripts disabled)
-        run: npm install --no-save --ignore-scripts --no-audit --no-fund markdownlint-cli2@0.23.2 prettier@3.9.6
+        run: npm install --no-save --ignore-scripts --no-audit --no-fund markdownlint-cli2@0.24.0 prettier@3.9.10
       - name: markdownlint
         run: ./node_modules/.bin/markdownlint-cli2
       - name: Prettier (check)

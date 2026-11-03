@@ -21,12 +21,12 @@ repos:
       - id: mixed-line-ending
 
   - repo: https://github.com/DavidAnson/markdownlint-cli2
-    rev: v0.23.2
+    rev: v0.24.0
     hooks:
       - id: markdownlint-cli2
 
   - repo: https://github.com/rbubley/mirrors-prettier
-    rev: v3.9.6
+    rev: v3.9.10
     hooks:
       - id: prettier
         types_or: [markdown, json, yaml]
@@ -37,7 +37,7 @@ repos:
       - id: gitleaks
 
   - repo: https://github.com/compilerla/conventional-pre-commit
-    rev: v4.4.0
+    rev: v4.5.0
     hooks:
       - id: conventional-pre-commit
         stages: [commit-msg]
