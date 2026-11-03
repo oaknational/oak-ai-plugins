@@ -1,7 +1,7 @@
 # The packages scripts/check_packages.py needs, pinned with hashes; CI installs them
-# with --require-hashes. Regenerate with (releases under a day old are left out):
+# with --require-hashes. Regenerate with (releases under 7 days old are left out):
 #   printf 'pyyaml\njsonschema\n' | uv pip compile - --generate-hashes --universal \
-#     --upgrade --python-version 3.14 --exclude-newer '24 hours' --no-header \
+#     --upgrade --python-version 3.14 --exclude-newer '7 days' --no-header \
 #     -o scripts/requirements.txt
 attrs==26.1.0 \
     --hash=sha256:c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309 \

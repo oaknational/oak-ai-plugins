@@ -9,6 +9,12 @@
 #   pre-commit run --all-files
 # The plugin validation hooks need Claude Code installed (the `claude` command).
 default_stages: [pre-commit]
+# The markdownlint and Prettier hooks run on a patched Node 24 release, inside CI's
+# range (>=24.22.1 <25). It is an exact version because pre-commit installs it into
+# each hook environment. Left unset, pre-commit asks for the latest release, which
+# can be a pre-release that fails to install.
+default_language_version:
+  node: 24.22.2
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
@@ -37,7 +43,7 @@ repos:
       - id: gitleaks
 
   - repo: https://github.com/compilerla/conventional-pre-commit
-    rev: v4.5.0
+    rev: v4.4.0
     hooks:
       - id: conventional-pre-commit
         stages: [commit-msg]

@@ -23,9 +23,9 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: '26'
+          node-version: '>=24.22.1 <25'
       - name: Install the pinned Claude Code binary (lifecycle scripts disabled)
-        run: npm install --no-save --ignore-scripts --no-audit --no-fund @anthropic-ai/claude-code-linux-x64@2.1.316
+        run: npm install --no-save --ignore-scripts --no-audit --no-fund @anthropic-ai/claude-code-linux-x64@2.1.311
       - name: Validate the marketplace
         run: ./node_modules/@anthropic-ai/claude-code-linux-x64/claude plugin validate --strict .
       - name: Validate the Claude plugin
@@ -55,7 +55,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: '26'
+          node-version: '>=24.22.1 <25'
       - name: Install pinned lint tools (lifecycle scripts disabled)
         run: npm install --no-save --ignore-scripts --no-audit --no-fund markdownlint-cli2@0.24.0 prettier@3.9.10
       - name: markdownlint
