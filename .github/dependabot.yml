@@ -1,13 +1,20 @@
 version: 2
 updates:
-  # Keeps the pinned GitHub Actions current, in one grouped weekly PR.
+  # Keeps the pinned GitHub Actions current. Minor and patch updates arrive in one
+  # grouped weekly PR; a major arrives on its own, so it is reviewed in isolation.
+  # Nothing is proposed until a release is 7 days old.
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
       interval: 'weekly'
+    cooldown:
+      default-days: 7
     groups:
       github-actions:
         patterns:
           - '*'
+        update-types:
+          - 'minor'
+          - 'patch'
     commit-message:
       prefix: 'ci'
