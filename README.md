@@ -85,6 +85,7 @@ scripts/
   release_notes.py                  # checks a release's version and writes its notes from the CHANGELOG
   requirements.txt                  # the pinned packages check_packages.py needs (PyYAML, jsonschema)
 .pre-commit-config.yaml             # the same checks, run locally before each commit
+.gitattributes                      # LF line endings on every platform
 docs/
   public-release.md                 # how this repository was prepared for public release
 CHANGELOG.md                        # what was published here, and when
