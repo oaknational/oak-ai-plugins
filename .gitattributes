@@ -1,0 +1,4 @@
+# Check text files out with LF line endings on every platform. The packages
+# ship LF, and scripts/check_packages.py splits frontmatter on LF.
+* text=auto eol=lf
+*.png binary
