@@ -16,11 +16,11 @@ be non-empty, so no check passes by reading nothing.
   reviewer account go in the portal's form), `capabilities` stays `[]`, and
   the package root holds exactly the expected entries.
 - Merged skills: each ChatGPT skill with no Claude skill of the same name
-  derives from the same-named Claude workflow and the agent it delegates to.
-  The agent's body is carried byte for byte from its first `##` heading; before
-  it come exactly the declared opening paragraph and the agent's own opening
-  plus one dependency sentence; the description is the workflow's, word for
-  word. Every such skill must be declared below.
+  derives from the same-named Claude workflow and the agent it delegates to,
+  and every workflow has one. The agent's body is carried byte for byte from
+  its first `##` heading; before it come exactly two paragraphs, an opening of
+  the skill's own, then the agent's opening plus one dependency sentence that
+  names the agent's skill; the description is the workflow's, word for word.
 - Both packages: the manifests agree field for field, every shipped skill's
   frontmatter meets the Agent Skills specification exactly, both icons are the
   Oak logo kept at assets/oak-national-academy-logo-512.png, and the ChatGPT
@@ -84,24 +84,13 @@ REPOSITORY = "https://github.com/oaknational/oak-ai-plugins"
 MCP_ENDPOINT = "https://mcp.thenational.academy/mcp"
 MCP_KEY = "oak-national-academy"
 
-# The authored edits of each merged skill. A ChatGPT skill with no Claude
-# skill of the same name must have an entry here, so nothing derives unchecked.
-DECLARED_EDITS = {
-    "audit-sequence": {
-        "opening": (
-            "Audit the draft sequence the user has shared. If they have not given you one, "
-            "ask for it before going further."
-        ),
-        "bears_on": "sequencing",
-    },
-    "find-misconceptions": {
-        "opening": (
-            "Find the misconceptions for the topic the user has named. If they have not said "
-            "which year group or key stage, ask before going further."
-        ),
-        "bears_on": "the teaching response",
-    },
-}
+# A merged skill's second paragraph: its agent's opening, then the sentence
+# saying where Oak's curriculum principles bear and which skill holds them.
+DEPENDENCY = re.compile(
+    r"(?P<opening>.+) Apply Oak's six curriculum principles as background where they bear on "
+    r".+ — the `(?P<skill>[^`]+)` skill holds them in full\.",
+    re.S,
+)
 
 DELEGATE_LINE = re.compile(r"^Delegate to the \*\*([a-z0-9-]+)\*\* agent\.$", re.M)
 
@@ -470,15 +459,16 @@ def derivation_problems(skill: str) -> list[str]:
     skill_head, skill_sections = split_body(merged_body, skill_path)
     if skill_sections != agent_sections:
         problems.append(f"{skill_path}: differs from {agent_path} from the first ## heading on")
-    sentence = (
-        "Apply Oak's six curriculum principles as background where they bear on "
-        f"{DECLARED_EDITS[skill]['bears_on']} — the `{agent['skills']}` skill holds them in full."
-    )
-    expected_head = [DECLARED_EDITS[skill]["opening"], f"{agent_head[0]} {sentence}" if agent_head else ""]
-    if len(agent_head) != 1 or skill_head != expected_head:
+    joined = DEPENDENCY.fullmatch(skill_head[1]) if len(skill_head) == 2 else None
+    if (
+        len(agent_head) != 1
+        or joined is None
+        or joined["opening"] != agent_head[0]
+        or joined["skill"] != agent["skills"]
+    ):
         problems.append(
-            f"{skill_path}: before the first ## heading it must hold the declared opening, "
-            "then the agent's opening plus the dependency sentence"
+            f"{skill_path}: before the first ## heading it must hold an opening of its own, "
+            "then the agent's opening plus the dependency sentence naming the agent's skill"
         )
     if merged["description"] != workflow["description"]:
         problems.append(f"{skill_path}: description differs from {workflow_path}")
@@ -489,8 +479,9 @@ def check_merged_skills() -> list[str]:
     merged = sorted(set(directories(f"{CHATGPT}/skills")) - set(directories(f"{CLAUDE}/skills")))
     if not merged:
         return [f"{CHATGPT}/skills: no merged skills found; this check would pass vacuously"]
-    if merged != sorted(DECLARED_EDITS):
-        return [f"merged skills {merged} differ from those declared in check_packages.py {sorted(DECLARED_EDITS)}"]
+    workflows = sorted(directories(f"{CLAUDE}/workflows"))
+    if merged != workflows:
+        return [f"merged skills {merged} differ from the Claude workflows {workflows}; each workflow ships as one"]
     return [problem for skill in merged for problem in derivation_problems(skill)]
 
 
