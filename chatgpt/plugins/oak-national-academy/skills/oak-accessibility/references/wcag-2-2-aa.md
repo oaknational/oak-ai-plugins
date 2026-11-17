@@ -43,8 +43,9 @@ doubt, read the criterion. Level AA includes everything at Level A.
 - **3.2.3 Consistent navigation (AA)** / **3.2.4 Consistent identification (AA).**
 - **3.3.1 Error identification (A)**, **3.3.2 Labels or instructions (A)** and **3.3.3 Error
   suggestion (AA)** for forms. **3.3.4 Error prevention (AA)** for submitting quiz answers, changing
-  or deleting saved data, and legal or financial commitments: the submission can be undone, is
-  checked for errors, or is confirmed first.
+  or deleting saved data, and legal or financial commitments: the submission can be undone, the
+  input is checked and people can correct any errors, or people can review, correct and confirm it
+  before it's final.
 
 ## Robust
 
