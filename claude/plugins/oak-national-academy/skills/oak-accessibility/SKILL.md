@@ -17,7 +17,7 @@ description: >-
 license: Accessibility guidance synthesised from WCAG 2.2 (W3C). See references/sources.md.
 metadata:
   author: Oak National Academy
-  version: '0.1.1'
+  version: '0.1.2'
 ---
 
 # Oak National Academy: Accessibility
@@ -59,8 +59,8 @@ Apply the floor below to everything. When you reach a specific artefact, load th
 4. **Contrast.** Text meets at least **4.5:1** (3:1 for large text ≥24px/19px-bold and for UI components/graphics). **Oak's target is 7:1** where the brand applies.
 5. **Keyboard and target size.** Anything interactive works by keyboard alone, has a visible focus indicator, and gives pointer targets of at least **24×24 CSS px** (WCAG 2.2 2.5.8).
 6. **Captions and transcripts.** Video has synchronised captions; audio has a transcript; meaningful animation/GIFs have a text equivalent and **must not flash** more than 3×/second.
-7. **Plain language.** Write so the content is as readable as the subject allows. (WCAG 3.1)
-8. **Resize and reflow.** Content stays usable at 200% zoom and reflows to a single column at 320px width; never disable zoom.
+7. **Plain language.** Write so the content is as readable as the subject allows. (WCAG 3.1.5, AAA: beyond the AA baseline)
+8. **Resize and reflow.** Content stays usable at 200% zoom and reflows at 320px width without scrolling in two directions; never disable zoom.
 
 When a tool can't express a feature (e.g. a slide tool with no real "heading" role), get as close as the format allows and **note the residual limitation** rather than claiming full conformance.
 

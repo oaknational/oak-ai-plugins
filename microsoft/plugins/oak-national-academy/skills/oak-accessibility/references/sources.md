@@ -15,7 +15,7 @@ artefacts — read the spec when a judgement is close.
 
 - GOV.UK — Understanding accessibility requirements for public sector bodies:
   <https://www.gov.uk/guidance/accessibility-requirements-for-public-sector-websites-and-apps>
-- GOV.UK Design System and accessibility guidance (patterns that meet WCAG):
+- Understanding WCAG 2.2 (GOV.UK Service Manual):
   <https://www.gov.uk/service-manual/helping-people-to-use-your-service/understanding-wcag>
 
 ## How this fits with Oak's other skills

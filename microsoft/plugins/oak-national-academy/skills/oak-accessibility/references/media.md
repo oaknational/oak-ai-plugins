@@ -14,7 +14,7 @@ Oak's lessons lean heavily on video and animated explanation, so this is high-st
   spoken (e.g. an on-screen diagram the narrator doesn't read out). Prefer scripting narration so it
   describes what's shown, which avoids needing a separate described track.
 - **No autoplay with sound.** If media plays automatically for more than 3 seconds, provide a pause/
-  stop/mute control (2.2.2).
+  stop/mute control (1.4.2, A).
 
 ## Audio-only
 
@@ -25,8 +25,9 @@ Oak's lessons lean heavily on video and animated explanation, so this is high-st
 
 - **No flashing** more than **three times per second** (2.3.1) — this is a seizure-safety
   criterion, not a nicety. Check animated explainers and transitions.
-- **Animated GIFs that loop**: provide a way to pause, or keep them short and non-essential;
-  give a text equivalent for any information they carry.
+- **Animated GIFs that loop**: if one moves for more than five seconds in all, provide a way to
+  pause, stop or hide it, or make it stop by itself within five seconds (2.2.2); give a text
+  equivalent for any information it carries.
 - **Respect reduced-motion**: where the platform supports it, honour
   `prefers-reduced-motion` and avoid large parallax/auto-motion that can trigger vestibular issues.
 - On Oak's brand "scribble"/draw-on animations and doodles: keep them decorative
