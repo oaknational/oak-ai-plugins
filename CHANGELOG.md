@@ -2,6 +2,10 @@
 
 Each version is the version of the plugins this repository publishes, the Claude plugin and the ChatGPT package. The Microsoft 365 Copilot package, being prepared alongside them, carries the same version. Up to 1.1.0 they were copied from [oak-open-curriculum-ecosystem](https://github.com/oaknational/oak-open-curriculum-ecosystem); from then on they are built here. This file records what was published here and when. What changed in the plugins themselves is in [the Claude plugin's changelog](claude/plugins/oak-national-academy/CHANGELOG.md).
 
+## 1.1.2 — 2026-11-17
+
+- The accessibility skill cites the right WCAG 2.2 criteria and describes them as W3C's text does. What changed is in [the Claude plugin's changelog](https://github.com/oaknational/oak-ai-plugins/blob/main/claude/plugins/oak-national-academy/CHANGELOG.md).
+
 ## 1.1.1 — 2026-10-21
 
 - The first version built here, not copied from oak-open-curriculum-ecosystem. What changed in the plugins is in [the Claude plugin's changelog](https://github.com/oaknational/oak-ai-plugins/blob/main/claude/plugins/oak-national-academy/CHANGELOG.md): the licence links and the ChatGPT package README.

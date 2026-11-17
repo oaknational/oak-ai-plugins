@@ -5,6 +5,29 @@ ChatGPT/Codex package share one version. Each entry is dated when it is
 written. Up to 1.1.0 the plugins were built in oak-open-curriculum-ecosystem;
 from 1.1.1 they are built in oaknational/oak-ai-plugins.
 
+## 1.1.2 — 2026-11-17
+
+- The accessibility skill, now 0.1.2, cites WCAG 2.2 as W3C's text reads:
+  - Autoplaying audio is 1.4.2 Audio Control, not 2.2.2.
+  - A looping animation that moves for more than five seconds in all needs a
+    way to pause, stop or hide it (2.2.2). Being short and non-essential is no
+    exemption.
+  - 2.4.4 Link Purpose lets a link's sentence, paragraph, list item or table
+    cell explain it. Making sense out of context is 2.4.9, at AAA.
+  - Plain language cites 3.1.5 Reading Level, at AAA, not the 3.1 guideline.
+  - Reflow (1.4.10) means no scrolling in two directions at 320 CSS px wide,
+    except content that needs a 2-D layout. It doesn't require a single column.
+  - 2.2.1 lets users turn off, adjust or extend time limits. Having none is
+    2.2.3, at AAA.
+  - 2.4.11 fails only when the focused element is entirely hidden. Keeping all
+    of it visible is 2.4.12, at AAA.
+  - 3.3.4 Error Prevention covers quiz answers, changes to saved data and legal
+    or financial commitments, not every form.
+  - 1.2.3 and 1.2.5 cover visual information the soundtrack doesn't convey,
+    and 4.1.2 asks for a control's name, role and state.
+  - The GOV.UK guidance on WCAG 2.2 is labelled as the Service Manual, not the
+    Design System.
+
 ## 1.1.1 — 2026-10-21
 
 - Both manifests' `license` field links to this repository's LICENSE,
